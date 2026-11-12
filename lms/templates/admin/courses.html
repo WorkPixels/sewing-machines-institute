@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Course Builder Studio | SMI University{% endblock %}
+
+{% block content %}
+<div class="lms-main">
+
+  <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid var(--color-linen); padding-bottom: 1.5rem;">
+    <div>
+      <span class="badge-pill badge-copper" style="margin-bottom: 0.5rem;">Curriculum Studio</span>
+      <h1 style="font-size: 2.2rem; margin: 0;">Course &amp; Lesson Management</h1>
+      <p style="color: var(--color-slate); margin-top: 0.25rem;">
+        Build online curriculums, organize modules, and manage protected video tutorials.
+      </p>
+    </div>
+
+    <button onclick="document.getElementById('addCourseModal').style.display='flex'" class="btn btn-copper btn-sm">
+      + Create New Course
+    </button>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 2rem;">
+    {% for c in courses %}
+    <div class="artisan-card" style="padding: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+        <div>
+          <span class="badge-pill badge-copper" style="font-size: 11px; margin-bottom: 0.4rem;">{{ c.category }} &bull; {{ c.badge }}</span>
+          <h2 style="font-size: 1.6rem; margin: 0.25rem 0;">{{ c.title }}</h2>
+          <p style="color: var(--color-slate); font-size: 0.9rem; max-width: 800px; margin: 0;">
+            {{ c.description }}
+          </p>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <div style="text-align: right;">
+            <div style="font-size: 1.4rem; font-family: var(--font-serif); font-weight: 800; color: var(--color-navy);">
+              {% if c.price == 0 %}Free{% else %}${{ c.price|int }}{% endif %}
+            </div>
+            <span style="font-size: 0.75rem; color: var(--color-slate);">One-time purchase</span>
+          </div>
+          <a href="{{ url_for('classroom', course_slug=c.slug) }}" class="btn btn-outline btn-sm">
+            View in Classroom ↗
+          </a>
+        </div>
+      </div>
+
+      <!-- Modules Accordion -->
+      <div style="background: var(--color-parchment); border: 1px solid var(--color-linen); border-radius: var(--radius-sm); padding: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h4 style="margin: 0; font-size: 1rem;">Curriculum Modules ({{ c.modules|length }} Modules &bull; {{ c.total_lessons }} Lessons)</h4>
+          <button onclick="openAddLessonModal({{ c.id }}, '{{ c.title|replace('\'', '') }}')" class="btn btn-navy btn-sm" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">
+            + Add Lesson to Course
+          </button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          {% for m in c.modules %}
+          <div style="background: #FFFFFF; border: 1px solid var(--color-linen); border-radius: 4px; padding: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <strong style="color: var(--color-navy); font-size: 0.9rem;">📂 {{ m.title }}</strong>
+              <span style="font-size: 0.75rem; color: var(--color-slate);">{{ m.lessons|length }} Lessons</span>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 0.35rem; padding-left: 1rem; border-left: 2px solid var(--color-linen);">
+              {% for l in m.lessons %}
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; padding: 0.25rem 0;">
+                <div>
+                  <span>{{ l.title }}</span>
+                  {% if l.is_preview %}
+                  <span class="badge-pill badge-mint" style="font-size: 9px; padding: 1px 4px;">Free Preview</span>
+                  {% endif %}
+                </div>
+                <span style="color: var(--color-slate); font-size: 0.75rem;">⏱️ {{ l.duration_mins }}m</span>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+
+<!-- Add Course Modal -->
+<div id="addCourseModal" style="display: none; position: fixed; inset: 0; background: rgba(13, 19, 29, 0.7); z-index: 2000; align-items: center; justify-content: center; padding: 1.5rem;">
+  <div class="artisan-card" style="max-width: 580px; width: 100%; box-shadow: var(--shadow-xl); position: relative;">
+    <button onclick="document.getElementById('addCourseModal').style.display='none'" style="position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+    <h3 style="margin-bottom: 0.5rem;">Create New SMI University Course</h3>
+    <p style="font-size: 0.85rem; color: var(--color-slate); margin-bottom: 1.5rem;">Define title, pricing, and category for a new program.</p>
+
+    <form method="POST" action="{{ url_for('admin_create_course') }}">
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem;">Course Title</label>
+        <input type="text" name="title" required placeholder="e.g. Master Serger & Overlock Synchronization" style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--color-linen); border-radius: var(--radius-sm); font-family: var(--font-sans); background: #FFFFFF;" />
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem;">Category</label>
+          <input type="text" name="category" value="Specialized" required style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--color-linen); border-radius: var(--radius-sm); font-family: var(--font-sans); background: #FFFFFF;" />
+        </div>
+        <div>
+          <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem;">Price (USD)</label>
+          <input type="number" name="price" value="299" step="1" required style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--color-linen); border-radius: var(--radius-sm); font-family: var(--font-sans); background: #FFFFFF;" />
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem;">Description</label>
+        <textarea name="description" rows="3" required placeholder="Detailed mechanical overview of this course..." style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--color-linen); border-radius: var(--radius-sm); font-family: var(--font-sans); background: #FFFFFF;"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-copper w-full" style="width: 100%;">Create Course &amp; Add Modules &rarr;</button>
+    </form>
+  </div>
+</div>
+
+<!-- Add Lesson Modal -->
+<div id="addLessonModal" style="display: none; position: fixed; inset: 0; background: rgba(13, 19, 29, 0.7); z-index: 2000; align-items: center; justify-content: center; padding: 1.5rem;">
+  <div class="artisan-card" style="max-width: 580px; width: 100%; box-shadow: var(--shadow-xl); position: relative;">
+    <button onclick="document.getElementById('addLessonModal').style.display='none'" style="position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+    <h3 style="margin-bottom: 0.5rem;" id="addLessonModalTitle">Add Lesson to Course</h3>
+    <p style="font-size: 0.85rem; color: var(--color-slate); margin-bottom: 1.5rem;">Add a new video tutorial and bench notes to this curriculum.</p>
+
+    <form method="POST" action="{{ url_for('admin_add_lesson') }}">
+      <input type="hidden" name="course_id" id="modalCourseId" />
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem;">Lesson Title</label>
+        <input type="text" name="title" required placeholder="e.g. Setting Looper Crossover Timing" style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--color-linen); border-radius: var(--radius-sm); font-family: var(--font-sans); background: #FFFFFF;" />
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem;">Duration (Minutes)</label>
+          <input type="number" name="duration_mins" value="20" required style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--color-linen); border-radius: var(--radius-sm); font-family: var(--font-sans); background: #FFFFFF;" />
+        </div>
+        <div style="display: flex; align-items: center; padding-top: 1.25rem;">
+          <label style="font-weight: 700; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+            <input type="checkbox" name="is_preview" value="1" />
+            Enable Free Preview
+          </label>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem;">Workbench Description &amp; Notes</label>
+        <textarea name="description" rows="3" required placeholder="Step-by-step guidance, clearance tolerances, and tool instructions..." style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--color-linen); border-radius: var(--radius-sm); font-family: var(--font-sans); background: #FFFFFF;"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-copper w-full" style="width: 100%;">Save Lesson to Curriculum &rarr;</button>
+    </form>
+  </div>
+</div>
+
+<script>
+function openAddLessonModal(courseId, courseTitle) {
+  document.getElementById('modalCourseId').value = courseId;
+  document.getElementById('addLessonModalTitle').innerText = 'Add Lesson to ' + courseTitle;
+  document.getElementById('addLessonModal').style.display = 'flex';
+}
+</script>
+{% endblock %}

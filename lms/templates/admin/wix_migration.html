@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Wix Account Bulk Migration | SMI University{% endblock %}
+
+{% block content %}
+<div class="lms-main" style="max-width: 960px;">
+
+  <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 2.5rem; border-bottom: 2px solid var(--color-linen); padding-bottom: 1.5rem;">
+    <div>
+      <span class="badge-pill badge-copper" style="margin-bottom: 0.5rem;">Database Migration Engine</span>
+      <h1 style="font-size: 2.2rem; margin: 0;">Wix Bulk Account &amp; Course Importer</h1>
+      <p style="color: var(--color-slate); margin-top: 0.25rem;">
+        Seamlessly migrate your existing customer records from Wix into SMI University with auto-provisioned student profiles.
+      </p>
+    </div>
+
+    <a href="{{ url_for('admin_users') }}" class="btn btn-navy btn-sm">
+      &larr; Return to Student Directory
+    </a>
+  </div>
+
+  <!-- Migration Report Display (If just imported) -->
+  {% if report %}
+  <div class="artisan-card" style="border-left: 4px solid var(--color-mint); margin-bottom: 2.5rem; background: var(--color-mint-light);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h3 style="color: #1F4E3C; margin: 0;">🎉 Wix Migration Complete!</h3>
+      <span class="badge-pill badge-mint">{{ report.total_rows }} Records Processed</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+      <div style="background: #FFFFFF; padding: 1rem; border-radius: var(--radius-sm); border: 1px solid rgba(126, 176, 155, 0.4);">
+        <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--color-slate);">New Accounts Created</span>
+        <div style="font-size: 1.8rem; font-weight: 800; color: #1F4E3C;">{{ report.created_count }}</div>
+      </div>
+      <div style="background: #FFFFFF; padding: 1rem; border-radius: var(--radius-sm); border: 1px solid rgba(126, 176, 155, 0.4);">
+        <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--color-slate);">Existing Accounts Updated</span>
+        <div style="font-size: 1.8rem; font-weight: 800; color: var(--color-copper);">{{ report.updated_count }}</div>
+      </div>
+      <div style="background: #FFFFFF; padding: 1rem; border-radius: var(--radius-sm); border: 1px solid rgba(126, 176, 155, 0.4);">
+        <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--color-slate);">Skipped Rows</span>
+        <div style="font-size: 1.8rem; font-weight: 800; color: var(--color-slate);">{{ report.skipped_count }}</div>
+      </div>
+    </div>
+
+    {% if report.created_users %}
+    <h4 style="color: var(--color-navy); margin-bottom: 0.5rem; font-size: 1rem;">Newly Created Student Profiles:</h4>
+    <div class="data-table-wrap" style="max-height: 250px; overflow-y: auto; margin-bottom: 1.5rem;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Student Name</th>
+            <th>Email</th>
+            <th>Granted Course</th>
+            <th>Initial Password</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in report.created_users %}
+          <tr>
+            <td><strong>{{ u.name }}</strong></td>
+            <td>{{ u.email }}</td>
+            <td><span class="badge-pill badge-copper" style="font-size: 10px;">{{ u.course_slug }}</span></td>
+            <td><code>{{ u.temp_password }}</code></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+
+    <a href="{{ url_for('admin_users') }}" class="btn btn-navy btn-sm">
+      View All Students in Directory &rarr;
+    </a>
+  </div>
+  {% endif %}
+
+  <!-- Upload Area -->
+  <div class="artisan-card" style="margin-bottom: 2.5rem;">
+    <h3 style="margin-bottom: 0.5rem;">Upload Wix Contacts or Orders CSV</h3>
+    <p style="font-size: 0.9rem; color: var(--color-slate); margin-bottom: 1.5rem;">
+      Export your orders or contacts from the Wix Dashboard (<em>Wix &gt; Contacts &gt; More Actions &gt; Export</em> or <em>Wix &gt; Orders &gt; Export</em>) and upload the file below.
+    </p>
+
+    <form method="POST" action="{{ url_for('admin_wix_migration') }}" enctype="multipart/form-data">
+      
+      <div class="csv-upload-dropzone" onclick="document.getElementById('csvFileInput').click()">
+        <div style="font-size: 3rem; margin-bottom: 0.75rem;">📁</div>
+        <strong style="font-size: 1.15rem; color: var(--color-copper); display: block; margin-bottom: 0.25rem;">
+          Click to Select CSV File or Drag &amp; Drop Here
+        </strong>
+        <p style="font-size: 0.85rem; color: var(--color-slate); margin: 0;">
+          Supports standard Wix Contact &amp; Order CSV exports (.csv)
+        </p>
+        <input type="file" id="csvFileInput" name="csv_file" accept=".csv" style="display: none;" onchange="updateFileName(this)" />
+        <div id="selectedFileName" style="margin-top: 1rem; font-weight: 700; color: var(--color-navy); font-size: 0.9rem;"></div>
+      </div>
+
+      <div style="margin: 1.5rem 0;">
+        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem;">
+          Default Initial Password for Imported Students
+        </label>
+        <input type="text" name="default_password" value="SMIstudent2026!" style="width: 100%; max-width: 380px; padding: 0.75rem 1rem; border: 1px solid var(--color-linen); border-radius: var(--radius-sm); font-family: var(--font-sans); background: #FFFFFF;" />
+        <span style="font-size: 0.75rem; color: var(--color-slate); display: block; margin-top: 0.25rem;">
+          Students can use this temporary password upon first login, or change it in their profile.
+        </span>
+      </div>
+
+      <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+        <button type="submit" class="btn btn-copper btn-lg">
+          Process Wix CSV Migration &rarr;
+        </button>
+
+        <span style="color: var(--color-slate); font-size: 0.85rem;">or</span>
+
+        <!-- One Click Test Button with Sample CSV -->
+        <button type="submit" name="use_sample" value="true" class="btn btn-mint btn-sm">
+          ⚡ Run Test with Sample Wix CSV (6 Students)
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- How Course Matching Works -->
+  <div class="artisan-card" style="background: var(--color-linen-subtle); border: 1px solid var(--color-linen);">
+    <h4 style="color: var(--color-navy); margin-bottom: 0.5rem; font-size: 1.05rem;">How Automatic Course Matching Works:</h4>
+    <p style="font-size: 0.85rem; color: var(--color-slate); margin-bottom: 0.75rem;">
+      When parsing your Wix export, the importer searches the product/plan/tag column for keyword matches:
+    </p>
+    <ul style="font-size: 0.825rem; color: var(--color-slate); line-height: 1.7; padding-left: 1.25rem;">
+      <li><strong>&ldquo;Correspondence&rdquo; / &ldquo;ProTraining 1&rdquo;</strong> &rarr; Unlocks <em>ProTraining 1: Complete Home Correspondence Course ($699)</em></li>
+      <li><strong>&ldquo;Computerized&rdquo; / &ldquo;ProTraining 2&rdquo;</strong> &rarr; Unlocks <em>ProTraining 2: Advanced Electronic &amp; Computerized Diagnostics ($499)</em></li>
+      <li><strong>&ldquo;Live&rdquo; / &ldquo;5-Day&rdquo; / &ldquo;Workshop&rdquo;</strong> &rarr; Unlocks <em>5-Day Live Master Technician Bench Companion</em></li>
+      <li><strong>&ldquo;Industrial&rdquo; / &ldquo;Lockstitch&rdquo;</strong> &rarr; Unlocks <em>Industrial &amp; Walking Foot Lockstitch Mastery ($399)</em></li>
+      <li><strong>All Imported Accounts</strong> automatically receive free access to the <em>Free 7-Step Machine Maintenance Blueprint</em>.</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+function updateFileName(input) {
+  const display = document.getElementById('selectedFileName');
+  if (input.files && input.files[0]) {
+    display.innerText = 'Selected File: ' + input.files[0].name;
+  }
+}
+</script>
+{% endblock %}

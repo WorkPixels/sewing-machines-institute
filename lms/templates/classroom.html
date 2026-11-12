@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+
+{% block title %}{{ current_lesson.title }} | SMI University Classroom{% endblock %}
+
+{% block content %}
+<div class="classroom-container">
+
+  <!-- LEFT PANE: VIDEO THEATER & LESSON CONTENT -->
+  <div class="video-theater-pane">
+    
+    <!-- Video Player Container (With Anti-Download Security & Dynamic Watermarking) -->
+    <div class="video-player-wrap" id="videoWrapper">
+      
+      <!-- Forensic Floating Watermark (Deters Screen Recording) -->
+      <div id="floatingWatermark" class="video-watermark-overlay">
+        🛡️ SMI University &bull; {{ g.user.name }} ({{ g.user.email }}) &bull; Licensed
+      </div>
+
+      <!-- Protected Video Element -->
+      <video
+        id="lessonVideoPlayer"
+        class="video-element"
+        controls
+        controlsList="nodownload noplaybackrate"
+        disablePictureInPicture
+        poster="{{ url_for('static', filename='media/hero-workshop.jpg') }}"
+        src="{{ url_for('stream_lesson', lesson_id=current_lesson.id) }}">
+        Your browser does not support the video tag.
+      </video>
+
+    </div>
+
+    <!-- Theater Info Bar & Action Controls -->
+    <div class="theater-info-bar">
+      <div>
+        <div style="font-size: 0.8rem; color: var(--color-mint); text-transform: uppercase; font-weight: 700; letter-spacing: 0.06em; margin-bottom: 0.25rem;">
+          {{ course.title }} &bull; {{ current_module.title }}
+        </div>
+        <h2 style="margin: 0;">{{ current_lesson.title }}</h2>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <!-- Complete Toggle Button -->
+        <button
+          id="markCompleteBtn"
+          class="btn {% if is_completed %}btn-mint{% else %}btn-outline{% endif %} btn-sm"
+          data-lesson-id="{{ current_lesson.id }}"
+          data-course-id="{{ course.id }}"
+          data-completed="{{ '1' if is_completed else '0' }}">
+          {% if is_completed %}
+          &#10003; Lesson Completed
+          {% else %}
+          Mark Lesson Complete
+          {% endif %}
+        </button>
+
+        <!-- Previous Lesson -->
+        {% if prev_lesson %}
+        <a href="{{ url_for('classroom', course_slug=course.slug, lesson_id=prev_lesson.id) }}" class="btn btn-navy btn-sm" title="Previous Lesson">
+          &larr; Prev
+        </a>
+        {% endif %}
+
+        <!-- Next Lesson -->
+        {% if next_lesson %}
+        <a href="{{ url_for('classroom', course_slug=course.slug, lesson_id=next_lesson.id) }}" class="btn btn-copper btn-sm" title="Next Lesson">
+          Next Lesson &rarr;
+        </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Lesson Tabs Navigation -->
+    <div class="lesson-tabs-nav">
+      <button class="tab-nav-btn active" id="tab-btn-notes" onclick="switchLessonTab('notes')">
+        🛠️ Workbench Notes
+      </button>
+      <button class="tab-nav-btn" id="tab-btn-blueprints" onclick="switchLessonTab('blueprints')">
+        📐 Schematics &amp; Blueprints
+      </button>
+      <button class="tab-nav-btn" id="tab-btn-qa" onclick="switchLessonTab('qa')">
+        💬 Ask Jeremiah (Q&amp;A)
+      </button>
+      <button class="tab-nav-btn" id="tab-btn-security" onclick="switchLessonTab('security')">
+        🛡️ Anti-Download Security
+      </button>
+    </div>
+
+    <!-- Tab 1: Workbench Notes -->
+    <div class="lesson-tab-body tab-pane-content" id="tab-pane-notes">
+      <div style="max-width: 860px;">
+        <span class="badge-pill badge-copper" style="margin-bottom: 0.75rem;">Master Technician Guide</span>
+        <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">Mechanical Overview: {{ current_lesson.title }}</h3>
+        <p class="lead" style="font-size: 1.05rem; color: var(--color-slate); line-height: 1.7;">
+          {{ current_lesson.description }}
+        </p>
+
+        <div style="background: var(--color-parchment-light); border: 1px solid var(--color-linen); border-left: 4px solid var(--color-copper); padding: 1.5rem; border-radius: var(--radius-sm); margin: 2rem 0;">
+          <h4 style="color: var(--color-navy); margin-bottom: 0.5rem; font-size: 1.1rem;">Critical Tolerance Rules for this Lesson</h4>
+          <ul style="padding-left: 1.25rem; color: var(--color-text-main); font-size: 0.95rem; line-height: 1.7;">
+            <li><strong>Needle Scarf Clearance:</strong> 0.05mm &ndash; 0.10mm (about the thickness of a single sheet of notepad paper).</li>
+            <li><strong>Needle Bar Rise:</strong> Bring needle to lowest dead center; raise handwheel counter-clockwise exactly 2.0mm &ndash; 2.4mm to form loop before hook tip meets scarf.</li>
+            <li><strong>Lubrication:</strong> Use only synthetic mineral sewing oil. Never apply WD-40 or vegetable oils to bronze shuttle bearings.</li>
+          </ul>
+        </div>
+
+        <h4 style="margin-top: 2rem; margin-bottom: 0.75rem;">Step-by-Step Workbench Procedure</h4>
+        <ol style="padding-left: 1.25rem; color: var(--color-slate); font-size: 0.95rem; line-height: 1.8;">
+          <li>Disconnect machine from AC power and release presser foot.</li>
+          <li>Remove needle plate with a short flathead technician screwdriver to prevent burring screw heads.</li>
+          <li>Clean lint accumulation behind feed dogs with a natural bristle brush.</li>
+          <li>Inspect hook point under direct 10x inspection light for thread grooves or needle burrs.</li>
+          <li>Verify hook timing mark alignment using your SMI technician timing gauge.</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- Tab 2: Blueprints & Schematics -->
+    <div class="lesson-tab-body tab-pane-content" id="tab-pane-blueprints" style="display: none;">
+      <div style="max-width: 860px;">
+        <h3 style="margin-bottom: 0.5rem;">Official SMI Mechanical Schematics</h3>
+        <p style="color: var(--color-slate); margin-bottom: 1.5rem;">
+          Authorized technician blueprints and exploded assembly diagrams for this module.
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+          <div class="artisan-card" style="padding: 1.5rem;">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">📐</div>
+            <strong style="color: var(--color-navy); display: block; margin-bottom: 0.25rem;">Timing Gauge Blueprint (PDF)</strong>
+            <p style="font-size: 0.8rem; color: var(--color-slate); margin-bottom: 1rem;">Official 2.0mm needle rise calibration chart for mechanical &amp; computerized machines.</p>
+            <a href="javascript:void(0)" onclick="alert('Authorized download verified: Timing_Blueprint_Rev4.pdf (Encrypted for {{ g.user.name }})')" class="btn btn-outline btn-sm">
+              View Schematic &darr;
+            </a>
+          </div>
+
+          <div class="artisan-card" style="padding: 1.5rem;">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">⚙️</div>
+            <strong style="color: var(--color-navy); display: block; margin-bottom: 0.25rem;">Rotary Hook Assembly Exploded View</strong>
+            <p style="font-size: 0.8rem; color: var(--color-slate); margin-bottom: 1rem;">Clearance tolerance diagram for vertical and horizontal drop-in rotary systems.</p>
+            <a href="javascript:void(0)" onclick="alert('Authorized download verified: Rotary_Hook_Assembly.pdf (Encrypted for {{ g.user.name }})')" class="btn btn-outline btn-sm">
+              View Schematic &darr;
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3: Ask Jeremiah (Q&A) -->
+    <div class="lesson-tab-body tab-pane-content" id="tab-pane-qa" style="display: none;">
+      <div style="max-width: 860px;">
+        <h3 style="margin-bottom: 0.5rem;">Workbench Q&amp;A &bull; Mentor Guidance</h3>
+        <p style="color: var(--color-slate); margin-bottom: 1.5rem;">
+          Stuck on a tricky timing issue or strange sound? Post your question directly to Jeremiah Trumble and the SMI technician community.
+        </p>
+
+        <div class="artisan-card" style="margin-bottom: 2rem; padding: 1.5rem;">
+          <textarea rows="3" placeholder="Describe the machine make, model, symptom, and what you observe at the hook..." style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--color-linen); border-radius: var(--radius-sm); font-family: var(--font-sans); margin-bottom: 0.75rem;"></textarea>
+          <button type="button" onclick="alert('Your question has been posted to Jeremiah Trumble. Average instructor response time: 24-48 hours.')" class="btn btn-copper btn-sm">
+            Post Question to Workbench &rarr;
+          </button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <div style="background: var(--color-parchment-light); border: 1px solid var(--color-linen); border-radius: var(--radius-sm); padding: 1.25rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+              <strong>Student Question: Robert M.</strong>
+              <span style="font-size: 0.75rem; color: var(--color-slate);">3 days ago</span>
+            </div>
+            <p style="font-size: 0.9rem; color: var(--color-slate); margin-bottom: 0.75rem;">
+              &ldquo;My hook passes the needle scarf nicely, but the thread still frays on heavy 69 nylon thread. What else should I check?&rdquo;
+            </p>
+            <div style="background: var(--color-mint-light); border-left: 3px solid var(--color-mint); padding: 0.75rem 1rem; border-radius: 4px; font-size: 0.85rem; color: #1F4E3C;">
+              <strong>Jeremiah Trumble (Lead Instructor):</strong> &ldquo;Check the thread guide eyelet right above the needle clamp, Robert! Microscopic burrs from broken needles often saw through nylon threads under tension. Polish it with an emery cord.&rdquo;
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 4: Anti-Download Security Details -->
+    <div class="lesson-tab-body tab-pane-content" id="tab-pane-security" style="display: none;">
+      <div style="max-width: 860px;">
+        <span class="badge-pill badge-mint" style="margin-bottom: 0.75rem;">Digital Rights Management</span>
+        <h3 style="margin-bottom: 0.5rem;">Content Protection Architecture</h3>
+        <p style="color: var(--color-slate); margin-bottom: 1.5rem;">
+          This classroom is built with institutional-grade video security to protect proprietary trade curriculum:
+        </p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <div class="artisan-card" style="padding: 1.5rem;">
+            <h4 style="color: var(--color-navy); margin-bottom: 0.5rem;">🛡️ Dynamic Forensic Watermarking</h4>
+            <p style="font-size: 0.85rem; color: var(--color-slate); margin: 0;">
+              Your student identity (<strong style="color: var(--color-copper);">{{ g.user.name }} - {{ g.user.email }}</strong>) is rendered dynamically across video frames to prevent unauthorized screen captures or rip distribution.
+            </p>
+          </div>
+
+          <div class="artisan-card" style="padding: 1.5rem;">
+            <h4 style="color: var(--color-navy); margin-bottom: 0.5rem;">🔒 Authenticated Streaming Proxy</h4>
+            <p style="font-size: 0.85rem; color: var(--color-slate); margin: 0;">
+              Video data is streamed through authenticated chunked byte-range endpoints (<code style="background: var(--color-linen); padding: 2px 4px; border-radius: 3px;">/api/stream</code>) that verify active database entitlements.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT PANE: COLLAPSIBLE CURRICULUM DRAWER (UDEMY / COURSERA STYLE) -->
+  <aside class="curriculum-sidebar">
+    <div class="curriculum-header">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+        <h3 style="margin: 0;">Course Content</h3>
+        <span class="badge-pill badge-mint" style="font-size: 11px;">
+          {{ course_progress.completed_count }}/{{ course_progress.total_count }} Complete
+        </span>
+      </div>
+      <div class="progress-bar-wrap" style="height: 6px; margin: 0.5rem 0 0.25rem;">
+        <div class="progress-bar-fill" style="width: {{ course_progress.percent }}%;"></div>
+      </div>
+      <span style="font-size: 0.75rem; color: #A0B2C6;">{{ course_progress.percent }}% Course Finished</span>
+    </div>
+
+    <!-- Curriculum Modules & Lessons Accordion -->
+    <div style="flex: 1; overflow-y: auto;">
+      {% for mod in modules %}
+      <div class="module-group">
+        <div class="module-header">
+          <span>{{ mod.title }}</span>
+          <span style="font-size: 0.75rem; color: #A0B2C6;">{{ mod.lessons|length }} Lessons</span>
+        </div>
+
+        <ul class="lesson-list">
+          {% for l in mod.lessons %}
+          <li>
+            <a
+              href="{{ url_for('classroom', course_slug=course.slug, lesson_id=l.id) }}"
+              class="lesson-item {% if l.id == current_lesson.id %}active{% endif %}">
+              <span
+                id="sidebar-check-{{ l.id }}"
+                class="lesson-checkbox {% if l.is_completed %}checked{% endif %}">
+                {% if l.is_completed %}&#10003;{% endif %}
+              </span>
+              <div style="flex: 1;">
+                <div style="font-size: 0.85rem; line-height: 1.35; margin-bottom: 0.2rem;">
+                  {{ l.title }}
+                </div>
+                <div style="font-size: 0.725rem; color: #8A9CAE; display: flex; align-items: center; gap: 0.5rem;">
+                  <span>⏱️ {{ l.duration_mins }}m</span>
+                  {% if l.is_preview %}
+                  <span class="badge-pill badge-mint" style="padding: 1px 5px; font-size: 9px;">Preview</span>
+                  {% endif %}
+                </div>
+              </div>
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endfor %}
+    </div>
+  </aside>
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/classroom.js') }}"></script>
+{% endblock %}

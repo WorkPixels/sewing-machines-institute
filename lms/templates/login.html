@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In to SMI University | Sewing Machines Institute{% endblock %}
+
+{% block content %}
+<div class="lms-main" style="max-width: 540px; margin: 3.5rem auto;">
+  
+  <div class="artisan-card" style="box-shadow: var(--shadow-xl); border-top: 4px solid var(--color-copper);">
+    
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <span class="badge-pill badge-copper" style="margin-bottom: 0.75rem;">SMI University Portal</span>
+      <h2 style="font-size: 1.85rem; margin-bottom: 0.5rem;">Welcome to the Bench</h2>
+      <p style="font-size: 0.9rem; color: var(--color-slate);">
+        Sign in to access your enrolled courses, lesson videos, blueprints, and technician certificates.
+      </p>
+    </div>
+
+    <!-- Tab Buttons -->
+    <div style="display: flex; border-bottom: 2px solid var(--color-linen); margin-bottom: 1.75rem;">
+      <button id="tab-login-btn" onclick="toggleAuthTab('login')" style="flex: 1; padding: 0.75rem; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; background: transparent; border: none; border-bottom: 3px solid var(--color-copper); color: var(--color-copper); cursor: pointer;">
+        Sign In
+      </button>
+      <button id="tab-register-btn" onclick="toggleAuthTab('register')" style="flex: 1; padding: 0.75rem; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; background: transparent; border: none; border-bottom: 3px solid transparent; color: var(--color-slate); cursor: pointer;">
+        New Student Registration
+      </button>
+    </div>
+
+    <!-- Login Form -->
+    <form id="login-form" method="POST" action="{{ url_for('login') }}">
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.4rem; color: var(--color-navy);">
+          Email Address
+        </label>
+        <input type="email" name="email" id="login-email" required placeholder="you@example.com" style="width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--color-linen-border); border-radius: var(--radius-sm); font-family: var(--font-sans); font-size: 0.95rem; background: #FFFFFF;" />
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.4rem; color: var(--color-navy);">
+          Password
+        </label>
+        <input type="password" name="password" id="login-password" required placeholder="••••••••••••" style="width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--color-linen-border); border-radius: var(--radius-sm); font-family: var(--font-sans); font-size: 0.95rem; background: #FFFFFF;" />
+      </div>
+
+      <button type="submit" class="btn btn-copper w-full" style="width: 100%; padding: 0.9rem;">
+        Enter Your Classroom &rarr;
+      </button>
+    </form>
+
+    <!-- Register Form -->
+    <form id="register-form" method="POST" action="{{ url_for('register') }}" style="display: none;">
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.4rem; color: var(--color-navy);">
+          Full Name
+        </label>
+        <input type="text" name="name" required placeholder="Jane Doe" style="width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--color-linen-border); border-radius: var(--radius-sm); font-family: var(--font-sans); font-size: 0.95rem; background: #FFFFFF;" />
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.4rem; color: var(--color-navy);">
+          Email Address
+        </label>
+        <input type="email" name="email" required placeholder="you@example.com" style="width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--color-linen-border); border-radius: var(--radius-sm); font-family: var(--font-sans); font-size: 0.95rem; background: #FFFFFF;" />
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.4rem; color: var(--color-navy);">
+          Create Password
+        </label>
+        <input type="password" name="password" required placeholder="At least 6 characters" minlength="6" style="width: 100%; padding: 0.85rem 1rem; border: 1px solid var(--color-linen-border); border-radius: var(--radius-sm); font-family: var(--font-sans); font-size: 0.95rem; background: #FFFFFF;" />
+      </div>
+
+      <div style="font-size: 0.8rem; color: var(--color-slate); margin-bottom: 1.25rem; background: var(--color-mint-light); padding: 0.75rem; border-radius: var(--radius-sm); border: 1px solid rgba(126, 176, 155, 0.4);">
+        🎁 <strong>Free Bonus:</strong> New student accounts automatically receive instant free access to our <em>Free 7-Step Machine Maintenance Blueprint</em> course!
+      </div>
+
+      <button type="submit" class="btn btn-copper w-full" style="width: 100%; padding: 0.9rem;">
+        Create Account &amp; Start Learning &rarr;
+      </button>
+    </form>
+
+    <!-- Quick 1-Click Demo Logins -->
+    <div style="margin-top: 2rem; border-top: 1px solid var(--color-linen); padding-top: 1.5rem;">
+      <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--color-slate); display: block; margin-bottom: 0.75rem; text-align: center;">
+        Quick One-Click Demo Access
+      </span>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+        <button type="button" onclick="fillDemo('admin')" class="btn btn-navy btn-sm" style="font-size: 0.75rem;">
+          ⚙️ Admin (Jeremiah)
+        </button>
+        <button type="button" onclick="fillDemo('student')" class="btn btn-mint btn-sm" style="font-size: 0.75rem;">
+          🎓 Student (Sarah)
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+function toggleAuthTab(tab) {
+  const loginForm = document.getElementById('login-form');
+  const registerForm = document.getElementById('register-form');
+  const loginBtn = document.getElementById('tab-login-btn');
+  const registerBtn = document.getElementById('tab-register-btn');
+
+  if (tab === 'login') {
+    loginForm.style.display = 'block';
+    registerForm.style.display = 'none';
+    loginBtn.style.color = 'var(--color-copper)';
+    loginBtn.style.borderBottomColor = 'var(--color-copper)';
+    registerBtn.style.color = 'var(--color-slate)';
+    registerBtn.style.borderBottomColor = 'transparent';
+  } else {
+    loginForm.style.display = 'none';
+    registerForm.style.display = 'block';
+    registerBtn.style.color = 'var(--color-copper)';
+    registerBtn.style.borderBottomColor = 'var(--color-copper)';
+    loginBtn.style.color = 'var(--color-slate)';
+    loginBtn.style.borderBottomColor = 'transparent';
+  }
+}
+
+function fillDemo(type) {
+  toggleAuthTab('login');
+  const emailInput = document.getElementById('login-email');
+  const passInput = document.getElementById('login-password');
+
+  if (type === 'admin') {
+    emailInput.value = 'admin@sewingmachinesinstitute.com';
+    passInput.value = 'SMIadmin2026!';
+  } else {
+    emailInput.value = 'student@sewingmachinesinstitute.com';
+    passInput.value = 'Student2026!';
+  }
+}
+</script>
+{% endblock %}

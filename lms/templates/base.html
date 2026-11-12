@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}SMI University | Master the Machine{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/lms.css') }}" />
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="lms-navbar">
+    <div class="nav-container">
+      <a href="{{ url_for('dashboard') if g.user else url_for('login') }}" class="brand-wrap">
+        <img src="{{ url_for('static', filename='media/logo-emblem.png') }}" alt="SMI Emblem" class="brand-logo-img" />
+        <div class="brand-text">
+          <h1>SMI University</h1>
+          <span>Sewing Machines Institute &bull; Learning Suite</span>
+        </div>
+      </a>
+
+      {% if g.user %}
+      <ul class="nav-menu">
+        <li><a href="{{ url_for('dashboard') }}" class="nav-item-link {% if active_page == 'dashboard' %}active{% endif %}">My Classroom</a></li>
+        <li><a href="{{ url_for('catalog') }}" class="nav-item-link {% if active_page == 'catalog' %}active{% endif %}">Course Catalog</a></li>
+        {% if g.user.role == 'admin' %}
+        <li>
+          <a href="{{ url_for('admin_overview') }}" class="nav-item-link {% if active_page and active_page.startswith('admin') %}active{% endif %}" style="color: var(--color-mint);">
+            ⚙️ Admin Studio
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <div class="user-profile-pill">
+          <span class="avatar-badge">{{ g.user.name[0] }}</span>
+          <span>{{ g.user.name }}</span>
+          {% if g.user.role == 'admin' %}
+          <span class="badge-pill badge-mint" style="font-size: 10px; padding: 1px 6px;">Admin</span>
+          {% endif %}
+        </div>
+        <a href="{{ url_for('logout') }}" class="btn btn-outline btn-sm" style="border-color: rgba(224, 209, 183, 0.4); color: #FAF3E9 !important;">Log Out</a>
+      </div>
+      {% else %}
+      <div style="display: flex; gap: 0.75rem;">
+        <a href="http://localhost:3000" target="_blank" class="btn btn-outline btn-sm" style="color: #FAF3E9 !important; border-color: rgba(224, 209, 183, 0.4);">
+          Main Website ↗
+        </a>
+        <a href="{{ url_for('login') }}" class="btn btn-copper btn-sm">Student Sign In</a>
+      </div>
+      {% endif %}
+    </div>
+  </header>
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-container">
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+          <span>{{ message }}</span>
+          <button onclick="this.parentElement.remove()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: inherit;">&times;</button>
+        </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Page Content -->
+  {% block content %}{% endblock %}
+
+  <!-- Footer -->
+  <footer style="background-color: var(--color-navy); color: #B4C4D5; border-top: 3px solid var(--color-copper); padding: 3rem 0 2rem; margin-top: 4rem;">
+    <div class="nav-container" style="flex-direction: column; gap: 1.5rem; text-align: center;">
+      <div style="display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+        <img src="{{ url_for('static', filename='media/logo-emblem.png') }}" alt="Logo" style="width: 32px; height: 32px;" />
+        <strong style="color: #FFFFFF; font-family: var(--font-serif); font-size: 1.15rem;">SMI University</strong>
+      </div>
+      <p style="font-size: 0.85rem; max-width: 600px; margin: 0 auto; color: #8C9EAF;">
+        Professional brand-agnostic technical training for sewing machine repair and restoration. Temple &bull; Georgetown &bull; Central Texas Heritage.
+      </p>
+      <div style="font-size: 0.8rem; color: var(--color-mint); font-style: italic;">
+        &ldquo;Because a broken gear shouldn't be the end of a story.&rdquo;
+      </div>
+      <div style="border-top: 1px solid rgba(224, 209, 183, 0.15); width: 100%; padding-top: 1rem; font-size: 0.775rem; color: #6D8299;">
+        &copy; 2026 Sewing Machines Institute (FSMI). All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

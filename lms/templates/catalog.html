@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Course Catalog | SMI University{% endblock %}
+
+{% block content %}
+<div class="lms-main">
+
+  <div style="text-align: center; max-width: 780px; margin: 0 auto 3rem;">
+    <span class="badge-pill badge-copper" style="margin-bottom: 0.5rem;">SMI University Curriculums</span>
+    <h1 style="font-size: 2.4rem; margin-bottom: 0.75rem;">Master the Mechanics of Sewing</h1>
+    <p style="font-size: 1.05rem; color: var(--color-slate);">
+      From foundational maintenance to 16-module master technician certifications. Each program is built on 30 years of daily bench wisdom.
+    </p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 2rem;">
+    {% for c in courses %}
+    <div class="artisan-card" style="display: flex; flex-direction: column; justify-content: space-between; padding: 0; overflow: hidden;">
+      <div style="position: relative; height: 200px; overflow: hidden; background: var(--color-navy);">
+        <img src="{{ c.thumbnail_url or url_for('static', filename='media/hero-workshop.jpg') }}" alt="{{ c.title }}" style="width: 100%; height: 100%; object-fit: cover;" />
+        <span class="badge-pill badge-copper" style="position: absolute; top: 12px; left: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
+          {{ c.badge or c.category }}
+        </span>
+        <div style="position: absolute; bottom: 12px; right: 12px; background: var(--color-copper); color: #FFFFFF; font-weight: 800; font-size: 1.05rem; padding: 4px 12px; border-radius: var(--radius-sm); box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
+          {% if c.price == 0 %}Free Access{% else %}${{ c.price|int }}{% endif %}
+        </div>
+      </div>
+
+      <div style="padding: 1.75rem; flex: 1; display: flex; flex-direction: column;">
+        <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--color-slate); letter-spacing: 0.05em; margin-bottom: 0.4rem;">
+          {{ c.category }} &bull; {{ c.lesson_count }} Lessons
+        </span>
+        <h3 style="font-size: 1.3rem; margin-bottom: 0.75rem;">{{ c.title }}</h3>
+        <p style="font-size: 0.9rem; color: var(--color-slate); margin-bottom: 1.5rem; flex: 1; line-height: 1.6;">
+          {{ c.description }}
+        </p>
+
+        <div style="border-top: 1px solid var(--color-linen); padding-top: 1.25rem;">
+          {% if c.is_enrolled %}
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span class="badge-pill badge-mint">&#10003; Enrolled on Account</span>
+            <a href="{{ url_for('classroom', course_slug=c.slug) }}" class="btn btn-copper btn-sm">
+              Enter Classroom &rarr;
+            </a>
+          </div>
+          {% else %}
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--color-navy);">
+              {% if c.price == 0 %}100% Free{% else %}${{ c.price|int }} One-Time{% endif %}
+            </span>
+            {% if c.price == 0 %}
+            <form method="POST" action="{{ url_for('enroll_free', course_id=c.id) }}" style="margin: 0;">
+              <button type="submit" class="btn btn-mint btn-sm">
+                Unlock Free Course &rarr;
+              </button>
+            </form>
+            {% else %}
+            <a href="{{ url_for('request_enrollment', course_slug=c.slug) }}" class="btn btn-copper btn-sm">
+              Enroll / Unlock Course
+            </a>
+            {% endif %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}

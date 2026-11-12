@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}My Classroom | SMI University{% endblock %}
+
+{% block content %}
+<div class="lms-main">
+
+  <!-- Welcome Header -->
+  <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 2.5rem; border-bottom: 2px solid var(--color-linen); padding-bottom: 1.5rem;">
+    <div>
+      <span class="badge-pill badge-copper" style="margin-bottom: 0.5rem;">Student Workbench</span>
+      <h1 style="font-size: 2.2rem; margin: 0;">Welcome, {{ g.user.name }}</h1>
+      <p style="color: var(--color-slate); margin-top: 0.25rem;">
+        Track your lessons, stream protected video tutorials, and reference mechanical blueprints.
+      </p>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <a href="{{ url_for('catalog') }}" class="btn btn-outline btn-sm">Browse Catalog</a>
+      {% if g.user.role == 'admin' %}
+      <a href="{{ url_for('admin_overview') }}" class="btn btn-navy btn-sm">⚙️ Open Admin Studio</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Continue Learning Jump Banner -->
+  {% if continue_lesson %}
+  <div class="artisan-card" style="background: linear-gradient(135deg, var(--color-navy) 0%, #28374D 100%); color: #FFFFFF; border: 2px solid var(--color-copper); margin-bottom: 3rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; box-shadow: var(--shadow-lg);">
+    <div style="max-width: 650px;">
+      <span class="badge-pill badge-mint" style="margin-bottom: 0.65rem;">Continue Where You Left Off</span>
+      <h3 style="color: #FFFFFF; font-size: 1.5rem; margin-bottom: 0.5rem;">{{ continue_lesson.title }}</h3>
+      <p style="color: #B4C4D5; font-size: 0.9rem; margin-bottom: 0.75rem;">
+        From <strong>{{ continue_lesson.course_title }}</strong> &bull; Module: {{ continue_lesson.module_title }}
+      </p>
+      <div style="display: flex; align-items: center; gap: 1rem; font-size: 0.8rem; color: #FAF3E9;">
+        <span>⏱️ {{ continue_lesson.duration_mins }} Mins</span>
+        <span>&bull;</span>
+        <span>🛡️ Anti-Download Stream Active</span>
+      </div>
+    </div>
+    <div>
+      <a href="{{ url_for('classroom', course_slug=continue_lesson.course_slug, lesson_id=continue_lesson.id) }}" class="btn btn-copper btn-lg">
+        Resume Classroom &rarr;
+      </a>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- My Enrolled Courses -->
+  <div style="margin-bottom: 3.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <div>
+        <h2 style="font-size: 1.65rem; margin: 0;">My Active Courses</h2>
+        <span style="font-size: 0.85rem; color: var(--color-slate);">Courses unlocked on your student profile</span>
+      </div>
+      <span class="badge-pill badge-navy">{{ enrolled_courses|length }} Active Enrollments</span>
+    </div>
+
+    {% if enrolled_courses %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 2rem;">
+      {% for c in enrolled_courses %}
+      <div class="artisan-card" style="display: flex; flex-direction: column; justify-content: space-between; padding: 0; overflow: hidden;">
+        <div style="position: relative; height: 180px; overflow: hidden; background: var(--color-navy);">
+          <img src="{{ c.thumbnail_url or url_for('static', filename='media/hero-workshop.jpg') }}" alt="{{ c.title }}" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.9;" />
+          <span class="badge-pill badge-copper" style="position: absolute; top: 12px; left: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
+            {{ c.badge or c.category }}
+          </span>
+        </div>
+
+        <div style="padding: 1.75rem; flex: 1; display: flex; flex-direction: column;">
+          <h3 style="font-size: 1.25rem; margin-bottom: 0.65rem;">{{ c.title }}</h3>
+          <p style="font-size: 0.875rem; color: var(--color-slate); margin-bottom: 1.25rem; flex: 1;">
+            {{ c.description[:130] }}...
+          </p>
+
+          <!-- Progress -->
+          <div style="margin-bottom: 1.25rem;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700;">
+              <span>Progress</span>
+              <span style="color: var(--color-copper);">{{ c.progress_percent }}% Completed</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" style="width: {{ c.progress_percent }}%;"></div>
+            </div>
+            <span style="font-size: 0.75rem; color: var(--color-text-muted);">
+              {{ c.completed_lessons }} of {{ c.total_lessons }} lessons completed
+            </span>
+          </div>
+
+          <a href="{{ url_for('classroom', course_slug=c.slug) }}" class="btn btn-copper w-full" style="width: 100%;">
+            Enter Classroom &rarr;
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="artisan-card" style="text-align: center; padding: 3rem;">
+      <p style="font-size: 1.1rem; color: var(--color-slate);">You are not currently enrolled in any courses.</p>
+      <a href="{{ url_for('catalog') }}" class="btn btn-copper btn-sm">Explore Course Catalog</a>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Available / Unlocked Programs Catalog -->
+  {% if other_courses %}
+  <div>
+    <div style="margin-bottom: 1.5rem;">
+      <h2 style="font-size: 1.65rem; margin: 0;">More SMI University Curriculums</h2>
+      <span style="font-size: 0.85rem; color: var(--color-slate);">Expand your trade mastery with these advanced programs</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 2rem;">
+      {% for c in other_courses %}
+      <div class="artisan-card" style="display: flex; flex-direction: column; justify-content: space-between; padding: 0; overflow: hidden; opacity: 0.95;">
+        <div style="position: relative; height: 160px; overflow: hidden; background: var(--color-navy);">
+          <img src="{{ c.thumbnail_url or url_for('static', filename='media/hero-workshop.jpg') }}" alt="{{ c.title }}" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.75;" />
+          <span class="badge-pill badge-navy" style="position: absolute; top: 12px; left: 12px; background: rgba(13, 19, 29, 0.85); color: #FAF3E9;">
+            {{ c.category }}
+          </span>
+          <div style="position: absolute; bottom: 12px; right: 12px; background: var(--color-copper); color: #FFFFFF; font-weight: 800; font-size: 0.9rem; padding: 3px 10px; border-radius: var(--radius-sm);">
+            {% if c.price == 0 %}Free{% else %}${{ c.price|int }}{% endif %}
+          </div>
+        </div>
+
+        <div style="padding: 1.5rem; flex: 1; display: flex; flex-direction: column;">
+          <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem;">{{ c.title }}</h3>
+          <p style="font-size: 0.85rem; color: var(--color-slate); margin-bottom: 1.25rem; flex: 1;">
+            {{ c.description[:120] }}...
+          </p>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--color-linen); padding-top: 1rem;">
+            <span style="font-size: 0.8rem; color: var(--color-text-muted);">
+              🔒 Requires Enrollment
+            </span>
+            {% if g.user.role == 'admin' %}
+            <a href="{{ url_for('admin_grant_self', course_id=c.id) }}" class="btn btn-mint btn-sm">
+              + Admin Quick Unlock
+            </a>
+            {% else %}
+            <a href="{{ url_for('catalog') }}" class="btn btn-outline btn-sm">
+              Enrollment Details
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}
