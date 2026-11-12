@@ -111,6 +111,11 @@ def seed_db():
             VALUES (?, ?, ?, 'admin', 'active', 'system', 'Master Administrator - Jeremiah Trumble / SMI University Lead')
         ''', ('Jeremiah Trumble (Admin)', 'admin@sewingmachinesinstitute.com', admin_pass))
 
+        cur.execute('''
+            INSERT INTO users (name, email, password_hash, role, status, source, notes)
+            VALUES (?, ?, ?, 'admin', 'active', 'system', 'Master Administrator - Joyanna Dunaway / SMI Director')
+        ''', ('Joyanna Dunaway (Admin)', 'joyanna@sewingmachinesinstitute.com', admin_pass))
+
         student_pass = generate_password_hash("Student2026!")
         cur.execute('''
             INSERT INTO users (name, email, password_hash, role, status, source, notes)
