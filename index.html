@@ -60,7 +60,7 @@
       <!-- Header CTAs -->
       <div class="header-actions">
         <a href="university.html" class="btn btn-outline btn-sm" style="color: #7EB09B; border-color: #7EB09B;">🎓 SMI University</a>
-        <a href="#schedule" class="btn btn-outline btn-sm" style="color: #E0D1B7; border-color: #E0D1B7;">View Dates</a>
+        <a href="university.html#admin" onclick="localStorage.setItem('smi_init_mode', 'admin')" class="btn btn-outline btn-sm" style="color: var(--color-copper); border-color: var(--color-copper);">⚙️ Admin Studio</a>
         <a href="#schedule" class="btn btn-primary btn-sm">Claim Your Seat</a>
       </div>
     </div>
@@ -954,10 +954,11 @@
 
     function updateCalculator() {
       const slider = document.getElementById('machineRange');
+      if (!slider) return;
       const count = parseInt(slider.value, 10);
       document.getElementById('machineCountLabel').innerText = count;
 
-      const ratePerMachine = 110;
+      const ratePerMachine = window.customRatePerMachine || 110;
       const weekly = count * ratePerMachine;
       const monthly = Math.round(weekly * 4.333);
       const annual = monthly * 12;
@@ -965,6 +966,82 @@
       document.getElementById('monthlyEarnings').innerText = '$' + monthly.toLocaleString();
       document.getElementById('annualEarnings').innerText = '$' + annual.toLocaleString();
     }
+
+    // Dynamic Admin CMS Synchronizer
+    (function syncAdminCms() {
+      try {
+        const stored = localStorage.getItem('smi_website_cms');
+        if (!stored) return;
+        const cms = JSON.parse(stored);
+
+        // 1. Hero copy updates
+        if (cms.heroPill) {
+          const pill = document.querySelector('.hero-pill span:last-child');
+          if (pill) pill.innerText = cms.heroPill;
+        }
+        if (cms.heroTitle) {
+          const h1 = document.querySelector('.hero-title');
+          if (h1) h1.innerHTML = cms.heroTitle;
+        }
+        if (cms.heroDesc) {
+          const p = document.querySelector('.hero-description');
+          if (p) p.innerText = cms.heroDesc;
+        }
+        if (cms.heroCtaText) {
+          const btn = document.querySelector('.hero-cta-group .btn-primary');
+          if (btn) btn.childNodes[0].nodeValue = cms.heroCtaText + ' ';
+        }
+
+        // 2. Pricing updates
+        if (cms.priceLive) {
+          const livePriceEl = document.querySelector('#tab-panel-live .program-price');
+          if (livePriceEl) livePriceEl.innerHTML = '$' + cms.priceLive.toLocaleString() + ' <span style="font-size: 1rem; font-weight: normal; color: var(--color-slate);">/ Tuition</span>';
+        }
+        if (cms.pricePro1) {
+          const pro1PriceEl = document.querySelector('#tab-panel-pro1 .program-price');
+          if (pro1PriceEl) pro1PriceEl.innerHTML = '$' + cms.pricePro1.toLocaleString() + ' <span style="font-size: 1rem; font-weight: normal; color: var(--color-slate);">/ Program</span>';
+        }
+
+        // 3. Live Bench Immersion Schedule sync
+        if (cms.liveEvents && Array.isArray(cms.liveEvents)) {
+          const tbody = document.querySelector('.schedule-table tbody');
+          if (tbody) {
+            tbody.innerHTML = cms.liveEvents.map(evt => {
+              const filled = evt.attendees ? evt.attendees.length : 0;
+              const left = Math.max(0, evt.maxSeats - filled);
+              let badge = '';
+              if (left === 0) {
+                badge = '<span class="seat-pill-active" style="background: rgba(27,38,59,0.12); color: var(--color-navy); border: 1px solid var(--color-navy);">Sold Out</span>';
+              } else if (left <= 2) {
+                badge = `<span class="seat-pill-active" style="background: rgba(155,94,60,0.15); color: var(--color-copper); border: 1px solid var(--color-copper);">${left} Seats Left</span>`;
+              } else if (filled === 0) {
+                badge = '<span class="seat-pill-active">Open Registration</span>';
+              } else {
+                badge = `<span class="seat-pill-active">${left} Seats Left</span>`;
+              }
+
+              return `
+                <tr>
+                  <td><strong>${evt.dates}</strong></td>
+                  <td>${evt.title}</td>
+                  <td>${evt.location}</td>
+                  <td>${badge}</td>
+                  <td style="text-align: right;"><a href="#contact" class="btn btn-primary btn-sm">Reserve Seat</a></td>
+                </tr>
+              `;
+            }).join('');
+          }
+        }
+
+        // 4. Calculator rate sync
+        if (cms.calculatorRate) {
+          window.customRatePerMachine = cms.calculatorRate;
+          updateCalculator();
+        }
+      } catch (e) {
+        console.error('Error syncing CMS in index.html:', e);
+      }
+    })();
   </script>
 
 </body>

@@ -422,80 +422,569 @@
     </div>
   </div>
 
-  <!-- ======================================================================
-       VIEW 3: ADMIN STUDIO & ACCESS CONTROL
+    <!-- ======================================================================
+       VIEW 3: FULL-FEATURED ADMIN STUDIO & COMMAND CENTER
        ====================================================================== -->
-  <div id="view-admin" style="display: none; max-width: 1240px; margin: 2.5rem auto; padding: 0 1.5rem;">
+  <div id="view-admin" style="display: none; max-width: 1280px; margin: 2rem auto; padding: 0 1.5rem;">
+    
+    <!-- Admin Studio Header -->
     <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid var(--color-linen); padding-bottom: 1.5rem;">
       <div>
-        <span class="badge-pill" style="background: rgba(126, 176, 155, 0.2); color: #2D6A4F; margin-bottom: 0.5rem;">⚙️ Admin Studio</span>
-        <h1 style="font-size: 2.2rem; margin: 0;">SMI University Management</h1>
-        <p style="color: var(--color-slate); margin-top: 0.25rem;">Control student access, bulk import accounts, and manage courses.</p>
+        <span class="badge-pill" style="background: rgba(126, 176, 155, 0.2); color: #2D6A4F; margin-bottom: 0.5rem; display: inline-block;">
+          ⚙️ Master Command Center
+        </span>
+        <h1 style="font-size: 2.2rem; margin: 0; color: var(--color-navy);">SMI Master Administrative Studio</h1>
+        <p style="color: var(--color-slate); margin-top: 0.35rem; font-size: 0.95rem;">
+          Full control over the website's main page copy, live bench cohorts, attendee rosters, video courses, and student entitlements.
+        </p>
       </div>
 
-      <button onclick="runSampleWixMigration()" class="btn btn-primary btn-sm">
-        ⚡ Run Sample Student Import (6 Students)
+      <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+        <a href="index.html" target="_blank" class="btn btn-outline btn-sm" style="color: var(--color-navy); border-color: var(--color-navy); display: inline-flex; align-items: center; gap: 0.4rem;">
+          🌐 View Live Main Website &nearr;
+        </a>
+        <button onclick="runSampleWixMigration()" class="btn btn-outline btn-sm">
+          ⚡ Bulk Student Import (CSV)
+        </button>
+      </div>
+    </div>
+
+    <!-- Global Stats Overview -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
+      <div style="background: #FFFFFF; border: 1px solid var(--color-linen); padding: 1.25rem; border-radius: 8px; box-shadow: var(--shadow-sm);">
+        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-slate); font-weight: bold; display: block; margin-bottom: 0.25rem;">Registered Students</span>
+        <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: bold; color: var(--color-navy);" id="statStudents">6 Profiles</div>
+      </div>
+      <div style="background: #FFFFFF; border: 1px solid var(--color-linen); padding: 1.25rem; border-radius: 8px; box-shadow: var(--shadow-sm);">
+        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-slate); font-weight: bold; display: block; margin-bottom: 0.25rem;">Active Course Enrollments</span>
+        <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: bold; color: var(--color-copper);" id="statEnrollments">14 Active</div>
+      </div>
+      <div style="background: #FFFFFF; border: 1px solid var(--color-linen); padding: 1.25rem; border-radius: 8px; box-shadow: var(--shadow-sm);">
+        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-slate); font-weight: bold; display: block; margin-bottom: 0.25rem;">Live Bench Sessions</span>
+        <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: bold; color: var(--color-mint);" id="statLiveSessions">4 Scheduled</div>
+      </div>
+      <div style="background: #FFFFFF; border: 1px solid var(--color-linen); padding: 1.25rem; border-radius: 8px; box-shadow: var(--shadow-sm);">
+        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-slate); font-weight: bold; display: block; margin-bottom: 0.25rem;">Bench Capacity Fill Rate</span>
+        <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: bold; color: var(--color-slate);" id="statBenchFill">7 / 24 Seats (29%)</div>
+      </div>
+    </div>
+
+    <!-- Admin Sub-Navigation Tabs -->
+    <div style="display: flex; gap: 0.5rem; border-bottom: 2px solid var(--color-linen); margin-bottom: 2rem; flex-wrap: wrap;">
+      <button onclick="setAdminSubTab('events')" id="admin-subtab-btn-events" class="admin-tab-btn active" style="padding: 0.85rem 1.25rem; font-weight: 700; font-size: 0.9rem; background: transparent; border: none; border-bottom: 3px solid var(--color-copper); color: var(--color-copper); cursor: pointer;">
+        📅 Live Bench Events &amp; Rosters
+      </button>
+      <button onclick="setAdminSubTab('students')" id="admin-subtab-btn-students" class="admin-tab-btn" style="padding: 0.85rem 1.25rem; font-weight: 700; font-size: 0.9rem; background: transparent; border: none; border-bottom: 3px solid transparent; color: var(--color-slate); cursor: pointer;">
+        👥 Student Directory &amp; Entitlements
+      </button>
+      <button onclick="setAdminSubTab('courses')" id="admin-subtab-btn-courses" class="admin-tab-btn" style="padding: 0.85rem 1.25rem; font-weight: 700; font-size: 0.9rem; background: transparent; border: none; border-bottom: 3px solid transparent; color: var(--color-slate); cursor: pointer;">
+        📚 Course &amp; Curriculum Studio
+      </button>
+      <button onclick="setAdminSubTab('cms')" id="admin-subtab-btn-cms" class="admin-tab-btn" style="padding: 0.85rem 1.25rem; font-weight: 700; font-size: 0.9rem; background: transparent; border: none; border-bottom: 3px solid transparent; color: var(--color-slate); cursor: pointer;">
+        🌐 Main Website CMS &amp; Pricing
+      </button>
+      <button onclick="setAdminSubTab('settings')" id="admin-subtab-btn-settings" class="admin-tab-btn" style="padding: 0.85rem 1.25rem; font-weight: 700; font-size: 0.9rem; background: transparent; border: none; border-bottom: 3px solid transparent; color: var(--color-slate); cursor: pointer;">
+        ⚙️ Settings &amp; Data Sync
       </button>
     </div>
 
-    <!-- Stats -->
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 2.5rem;">
-      <div style="background: #FFFFFF; border: 1px solid var(--color-linen); padding: 1.25rem; border-radius: 8px;">
-        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-slate); font-weight: bold;">Registered Students</span>
-        <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: bold; color: var(--color-navy);" id="statStudents">8 Profiles</div>
-      </div>
-      <div style="background: #FFFFFF; border: 1px solid var(--color-linen); padding: 1.25rem; border-radius: 8px;">
-        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-slate); font-weight: bold;">Active Enrollments</span>
-        <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: bold; color: var(--color-copper);" id="statEnrollments">14 Active</div>
-      </div>
-      <div style="background: #FFFFFF; border: 1px solid var(--color-linen); padding: 1.25rem; border-radius: 8px;">
-        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-slate); font-weight: bold;">SMI Courses</span>
-        <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: bold; color: var(--color-mint);">5 Programs</div>
-      </div>
-      <div style="background: #FFFFFF; border: 1px solid var(--color-linen); padding: 1.25rem; border-radius: 8px;">
-        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-slate); font-weight: bold;">Imported Accounts</span>
-        <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: bold; color: var(--color-slate);" id="statWix">6 Accounts</div>
+    <!-- ====================================================================
+         SUB-TAB 1: LIVE BENCH IMMERSION EVENTS & ROSTERS
+         ==================================================================== -->
+    <div id="admin-panel-events" class="admin-subpanel">
+      <div style="background: #FFFFFF; border: 1px solid var(--color-linen); border-radius: 12px; overflow: hidden; padding: 1.5rem; margin-bottom: 2.5rem; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+              <span class="badge-pill" style="background: rgba(155, 94, 60, 0.15); color: var(--color-copper); font-size: 11px;">Temple, TX Training Center</span>
+              <h3 style="margin: 0; font-size: 1.35rem; color: var(--color-navy);">Live Bench Immersion Schedule &amp; Attendee Manager</h3>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--color-slate); margin: 0;">
+              Schedule new workshop cohorts, enforce workbench caps (strictly 6 workbenches per cohort), and assign or manage registered attendees.
+            </p>
+          </div>
+
+          <button onclick="toggleNewEventForm()" class="btn btn-primary btn-sm" id="btnToggleNewEvent" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+            <span>➕</span> <span>Build New Live Event</span>
+          </button>
+        </div>
+
+        <!-- Collapsible New Live Event Builder Form -->
+        <div id="newEventFormContainer" style="display: none; background: var(--color-parchment-light); border: 1px solid var(--color-linen); border-left: 4px solid var(--color-copper); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
+          <h4 style="font-family: var(--font-heading); color: var(--color-navy); margin-top: 0; margin-bottom: 1rem;">
+            🛠️ Schedule New Live Bench Workshop
+          </h4>
+          <form onsubmit="handleCreateLiveEvent(event)" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <div>
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-slate); margin-bottom: 0.35rem;">Session Dates</label>
+              <input type="text" id="eventDatesInput" required placeholder="e.g. July 14 – 18, 2026" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--color-linen); border-radius: 4px; font-size: 0.9rem;" />
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-slate); margin-bottom: 0.35rem;">Program Format</label>
+              <select id="eventTitleInput" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--color-linen); border-radius: 4px; font-size: 0.9rem; background: #fff;">
+                <option value="5-Day Live Master Technician">5-Day Live Master Technician</option>
+                <option value="3-Day Industrial Bench Intensive">3-Day Industrial Bench Intensive</option>
+                <option value="Weekend Antique Restoration Workshop">Weekend Antique Restoration Workshop</option>
+                <option value="Electronic &amp; Computerized Repair Lab">Electronic &amp; Computerized Repair Lab</option>
+              </select>
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-slate); margin-bottom: 0.35rem;">Location</label>
+              <input type="text" id="eventLocationInput" value="Temple, TX Bench Studio" required style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--color-linen); border-radius: 4px; font-size: 0.9rem;" />
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-slate); margin-bottom: 0.35rem;">Max Workbench Seats</label>
+              <input type="number" id="eventMaxSeatsInput" value="6" min="1" max="20" required style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--color-linen); border-radius: 4px; font-size: 0.9rem;" />
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-slate); margin-bottom: 0.35rem;">Tuition Price ($)</label>
+              <input type="number" id="eventPriceInput" value="1895" min="0" required style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--color-linen); border-radius: 4px; font-size: 0.9rem;" />
+            </div>
+            <div style="display: flex; align-items: flex-end; gap: 0.5rem; grid-column: 1 / -1;">
+              <button type="submit" class="btn btn-primary btn-sm">
+                Save &amp; Publish Live Session
+              </button>
+              <button type="button" onclick="toggleNewEventForm()" class="btn btn-outline btn-sm">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Live Sessions Table -->
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;" id="liveEventsTable">
+            <thead>
+              <tr style="background: var(--color-navy); color: #FFFFFF; text-align: left;">
+                <th style="padding: 0.75rem 1rem;">Session Dates &amp; Format</th>
+                <th style="padding: 0.75rem 1rem;">Location</th>
+                <th style="padding: 0.75rem 1rem;">Workbench Capacity</th>
+                <th style="padding: 0.75rem 1rem;">Seat Availability</th>
+                <th style="padding: 0.75rem 1rem; text-align: right;">Attendee Actions</th>
+              </tr>
+            </thead>
+            <tbody id="liveEventsTableBody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
-    <!-- Student Access Control Table -->
-    <div style="background: #FFFFFF; border: 1px solid var(--color-linen); border-radius: 12px; overflow: hidden; padding: 1.5rem; margin-bottom: 2.5rem;">
-      <h3 style="margin-bottom: 0.5rem;">Student Access &amp; Entitlements (1-Click Granular Toggle)</h3>
-      <p style="font-size: 0.85rem; color: var(--color-slate); margin-bottom: 1.5rem;">
-        Click any course pill to immediately grant or revoke access on that student's profile:
-      </p>
+    <!-- ====================================================================
+         SUB-TAB 2: STUDENT DIRECTORY & COURSE ACCESS
+         ==================================================================== -->
+    <div id="admin-panel-students" class="admin-subpanel" style="display: none;">
+      <div style="background: #FFFFFF; border: 1px solid var(--color-linen); border-radius: 12px; overflow: hidden; padding: 1.5rem; margin-bottom: 2.5rem; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
+          <div>
+            <h3 style="margin: 0; font-size: 1.35rem; color: var(--color-navy);">Student Directory &amp; Entitlements (1-Click Granular Toggle)</h3>
+            <p style="font-size: 0.85rem; color: var(--color-slate); margin-top: 0.25rem;">
+              Click any course pill to immediately grant or revoke student access. Changes persist immediately.
+            </p>
+          </div>
 
-      <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;" id="adminTable">
-        <thead>
-          <tr style="background: var(--color-navy); color: #FFFFFF; text-align: left;">
-            <th style="padding: 0.75rem 1rem;">Student Name &amp; Email</th>
-            <th style="padding: 0.75rem 1rem;">Source</th>
-            <th style="padding: 0.75rem 1rem;">Course Entitlements (Click to Toggle)</th>
-          </tr>
-        </thead>
-        <tbody id="studentTableBody">
-          <!-- Populated by JS -->
-        </tbody>
-      </table>
+          <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+            <input type="text" id="studentSearchInput" onkeyup="handleStudentSearch(this.value)" placeholder="🔍 Search by name or email..." style="padding: 0.55rem 0.85rem; border: 1px solid var(--color-linen); border-radius: 4px; font-size: 0.85rem; min-width: 240px;" />
+            <button onclick="promptAddNewStudent()" class="btn btn-primary btn-sm">
+              ➕ Add Student Profile
+            </button>
+          </div>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;" id="adminTable">
+            <thead>
+              <tr style="background: var(--color-navy); color: #FFFFFF; text-align: left;">
+                <th style="padding: 0.75rem 1rem;">Student Name &amp; Contact</th>
+                <th style="padding: 0.75rem 1rem;">Source</th>
+                <th style="padding: 0.75rem 1rem;">Course Entitlements (Click to Toggle Access)</th>
+                <th style="padding: 0.75rem 1rem; text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="studentTableBody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================================
+         SUB-TAB 3: COURSE & CURRICULUM STUDIO
+         ==================================================================== -->
+    <div id="admin-panel-courses" class="admin-subpanel" style="display: none;">
+      <div style="background: #FFFFFF; border: 1px solid var(--color-linen); border-radius: 12px; overflow: hidden; padding: 1.5rem; margin-bottom: 2.5rem; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+          <div>
+            <h3 style="margin: 0; font-size: 1.35rem; color: var(--color-navy);">Course Curriculum &amp; Video Lesson Manager</h3>
+            <p style="font-size: 0.85rem; color: var(--color-slate); margin-top: 0.25rem;">
+              Manage programs, add new video lessons, specify durations, and edit workbench mechanical notes.
+            </p>
+          </div>
+
+          <div style="display: flex; gap: 0.5rem;">
+            <button onclick="toggleNewLessonForm()" class="btn btn-primary btn-sm">
+              ➕ Add Video Lesson
+            </button>
+          </div>
+        </div>
+
+        <!-- Add Lesson Form -->
+        <div id="newLessonFormContainer" style="display: none; background: var(--color-parchment-light); border: 1px solid var(--color-linen); border-left: 4px solid var(--color-mint); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
+          <h4 style="font-family: var(--font-heading); color: var(--color-navy); margin-top: 0; margin-bottom: 1rem;">
+            📹 Add New Video Lesson to Curriculum
+          </h4>
+          <form onsubmit="handleCreateLesson(event)" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+            <div style="grid-column: 1 / -1;">
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-slate); margin-bottom: 0.35rem;">Lesson Title</label>
+              <input type="text" id="lessonTitleInput" required placeholder="e.g. Lesson 8: Feed Cam Synchronization & Timing Marks" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--color-linen); border-radius: 4px; font-size: 0.9rem;" />
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-slate); margin-bottom: 0.35rem;">Duration (Minutes)</label>
+              <input type="text" id="lessonDurationInput" required placeholder="e.g. 17m" value="16m" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--color-linen); border-radius: 4px; font-size: 0.9rem;" />
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-slate); margin-bottom: 0.35rem;">Preview Status</label>
+              <select id="lessonPreviewInput" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--color-linen); border-radius: 4px; font-size: 0.9rem; background: #fff;">
+                <option value="false">Enrolled Students Only (Locked)</option>
+                <option value="true">Free Public Preview</option>
+              </select>
+            </div>
+            <div style="display: flex; align-items: flex-end; gap: 0.5rem;">
+              <button type="submit" class="btn btn-primary btn-sm">
+                Save &amp; Append Lesson
+              </button>
+              <button type="button" onclick="toggleNewLessonForm()" class="btn btn-outline btn-sm">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Lessons Table -->
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+          <thead>
+            <tr style="background: var(--color-navy); color: #FFFFFF; text-align: left;">
+              <th style="padding: 0.75rem 1rem; width: 60px;">Order</th>
+              <th style="padding: 0.75rem 1rem;">Lesson Title</th>
+              <th style="padding: 0.75rem 1rem; width: 100px;">Duration</th>
+              <th style="padding: 0.75rem 1rem; width: 140px;">Status</th>
+              <th style="padding: 0.75rem 1rem; text-align: right; width: 180px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="adminLessonsTableBody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ====================================================================
+         SUB-TAB 4: MAIN WEBSITE CMS & PRICING
+         ==================================================================== -->
+    <div id="admin-panel-cms" class="admin-subpanel" style="display: none;">
+      <div style="background: #FFFFFF; border: 1px solid var(--color-linen); border-radius: 12px; overflow: hidden; padding: 1.75rem; margin-bottom: 2.5rem; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--color-linen); padding-bottom: 1rem;">
+          <div>
+            <h3 style="margin: 0; font-size: 1.35rem; color: var(--color-navy);">Main Website CMS &amp; Content Control</h3>
+            <p style="font-size: 0.85rem; color: var(--color-slate); margin-top: 0.25rem;">
+              Edit headlines, tuition rates, ROI calculator fees, and workshop details. Changes immediately update index.html.
+            </p>
+          </div>
+
+          <div style="display: flex; gap: 0.5rem;">
+            <button onclick="saveCmsToStorage()" class="btn btn-primary btn-sm">
+              💾 Save &amp; Push to Live Website
+            </button>
+            <button onclick="resetCmsDefaults()" class="btn btn-outline btn-sm">
+              🔄 Reset Defaults
+            </button>
+          </div>
+        </div>
+
+        <form id="cmsForm" onsubmit="event.preventDefault(); saveCmsToStorage();" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.75rem;">
+          <!-- Left Column: Hero & Copy -->
+          <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+            <h4 style="font-family: var(--font-heading); color: var(--color-copper); margin: 0; border-bottom: 2px solid var(--color-linen); padding-bottom: 0.4rem;">
+              1. Hero &amp; Headline Copy
+            </h4>
+
+            <div>
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-slate); margin-bottom: 0.35rem;">Hero Eyebrow Pill Text</label>
+              <input type="text" id="cmsHeroPill" value="The Encouraging Master • 30 Years of Bench Wisdom" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--color-linen); border-radius: 4px; font-size: 0.9rem;" />
+            </div>
+
+            <div>
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-slate); margin-bottom: 0.35rem;">Main Headline H1</label>
+              <input type="text" id="cmsHeroTitle" value="Master the Machine. Preserve the Craft." style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--color-linen); border-radius: 4px; font-size: 0.9rem;" />
+            </div>
+
+            <div>
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-slate); margin-bottom: 0.35rem;">Hero Subhead Description</label>
+              <textarea id="cmsHeroDesc" rows="4" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--color-linen); border-radius: 4px; font-size: 0.85rem; line-height: 1.6;">There is a rhythmic satisfaction in a sewing machine that hums perfectly. At the Institute, we pull back the curtain on the mechanics of sewing—turning "broken" into "beautiful" one gear at a time. Whether you're maintaining an heirloom, building self-sufficiency, or launching a respected trade, there is a place for you at our bench.</textarea>
+            </div>
+
+            <div>
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-slate); margin-bottom: 0.35rem;">Primary CTA Button Label</label>
+              <input type="text" id="cmsHeroCtaText" value="Claim Your Seat at the Bench" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--color-linen); border-radius: 4px; font-size: 0.9rem;" />
+            </div>
+          </div>
+
+          <!-- Right Column: Programs Pricing & Calculator -->
+          <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+            <h4 style="font-family: var(--font-heading); color: var(--color-copper); margin: 0; border-bottom: 2px solid var(--color-linen); padding-bottom: 0.4rem;">
+              2. Program Tuition &amp; ROI Calculator
+            </h4>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div>
+                <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-slate); margin-bottom: 0.35rem;">5-Day Live Class Tuition ($)</label>
+                <input type="number" id="cmsPriceLive" value="1895" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--color-linen); border-radius: 4px; font-size: 0.9rem;" />
+              </div>
+
+              <div>
+                <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-slate); margin-bottom: 0.35rem;">ProTraining 1 ($)</label>
+                <input type="number" id="cmsPricePro1" value="699" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--color-linen); border-radius: 4px; font-size: 0.9rem;" />
+              </div>
+
+              <div>
+                <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-slate); margin-bottom: 0.35rem;">ProTraining 2 ($)</label>
+                <input type="number" id="cmsPricePro2" value="499" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--color-linen); border-radius: 4px; font-size: 0.9rem;" />
+              </div>
+
+              <div>
+                <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-slate); margin-bottom: 0.35rem;">1-on-1 Consultation ($/hr)</label>
+                <input type="number" id="cmsPriceConsult" value="150" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--color-linen); border-radius: 4px; font-size: 0.9rem;" />
+              </div>
+            </div>
+
+            <div>
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-slate); margin-bottom: 0.35rem;">Earnings Calculator Avg Fee per Machine ($)</label>
+              <input type="number" id="cmsCalculatorRate" value="110" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--color-linen); border-radius: 4px; font-size: 0.9rem;" />
+            </div>
+
+            <h4 style="font-family: var(--font-heading); color: var(--color-copper); margin: 0.5rem 0 0 0; border-bottom: 2px solid var(--color-linen); padding-bottom: 0.4rem;">
+              3. Workshop Studio &amp; Contact Info
+            </h4>
+
+            <div>
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-slate); margin-bottom: 0.35rem;">Training Center Address</label>
+              <input type="text" id="cmsLocation" value="Temple, Texas, USA" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--color-linen); border-radius: 4px; font-size: 0.9rem;" />
+            </div>
+
+            <div>
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-slate); margin-bottom: 0.35rem;">Admissions Office Hours</label>
+              <input type="text" id="cmsHours" value="Mon – Sat, 8:00 AM – 6:00 PM CST" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--color-linen); border-radius: 4px; font-size: 0.9rem;" />
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ====================================================================
+         SUB-TAB 5: SETTINGS & DATA EXPORT
+         ==================================================================== -->
+    <div id="admin-panel-settings" class="admin-subpanel" style="display: none;">
+      <div style="background: #FFFFFF; border: 1px solid var(--color-linen); border-radius: 12px; overflow: hidden; padding: 1.75rem; margin-bottom: 2.5rem; box-shadow: var(--shadow-sm);">
+        <h3 style="margin: 0 0 0.5rem 0; font-size: 1.35rem; color: var(--color-navy);">Institute Data Management &amp; Backup</h3>
+        <p style="font-size: 0.85rem; color: var(--color-slate); margin-bottom: 1.5rem;">
+          Export complete student directory, live event schedules, and CMS settings as JSON, or reset to factory defaults.
+        </p>
+
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <button onclick="exportInstituteData()" class="btn btn-primary btn-sm">
+            📥 Export Entire Institute Configuration (JSON)
+          </button>
+          <button onclick="resetAllInstituteData()" class="btn btn-outline btn-sm" style="color: #c92a2a; border-color: #c92a2a;">
+            ⚠️ Reset All Data to Institute Defaults
+          </button>
+        </div>
+      </div>
     </div>
 
   </div>
 
+  <!-- ======================================================================
+       MODAL: LIVE BENCH ATTENDEE ROSTER MANAGER
+       ====================================================================== -->
+  <div id="rosterModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(13, 19, 29, 0.75); backdrop-filter: blur(4px); z-index: 9999; justify-content: center; align-items: center; padding: 1.5rem;">
+    <div style="background: #FFFFFF; border-radius: 12px; width: 100%; max-width: 820px; max-height: 90vh; overflow-y: auto; border: 2px solid var(--color-copper); box-shadow: var(--shadow-lg);">
+      <div style="background: var(--color-navy); color: #FFFFFF; padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--color-copper);">
+        <div>
+          <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-mint); font-weight: 700;">
+            Live Bench Attendee Roster
+          </span>
+          <h3 style="margin: 0.2rem 0 0 0; color: #FFFFFF; font-size: 1.25rem;" id="modalEventTitle">
+            March 17 – 21, 2026 &bull; 5-Day Live Master Technician
+          </h3>
+        </div>
+        <button onclick="closeRosterModal()" style="background: none; border: none; color: #FAF3EA; font-size: 1.75rem; cursor: pointer; line-height: 1;">&times;</button>
+      </div>
+
+      <div style="padding: 1.5rem;">
+        <!-- Capacity Bar in Modal -->
+        <div style="background: var(--color-parchment-light); border: 1px solid var(--color-linen); padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+          <div>
+            <strong style="color: var(--color-navy); font-size: 1.05rem;" id="modalCapacityText">4 of 6 Workbenches Reserved</strong>
+            <div style="font-size: 0.85rem; color: var(--color-slate); margin-top: 0.15rem;" id="modalSeatsRemainingText">2 Workbench Seats Remaining</div>
+          </div>
+          <div style="width: 180px; height: 12px; background: rgba(27, 38, 59, 0.1); border-radius: 999px; overflow: hidden;">
+            <div id="modalCapacityBar" style="height: 100%; background: var(--color-copper); width: 66%; transition: width 0.3s ease;"></div>
+          </div>
+        </div>
+
+        <!-- Add Student to Roster Form -->
+        <div style="background: #FAFAFA; border: 1px dashed var(--color-slate); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
+          <h4 style="margin: 0 0 0.75rem 0; font-size: 0.95rem; color: var(--color-navy);">
+            ➕ Assign Student to a Workbench Seat
+          </h4>
+          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
+            <select id="modalStudentSelect" style="flex: 2; min-width: 220px; padding: 0.55rem 0.75rem; border: 1px solid var(--color-linen); border-radius: 4px; font-size: 0.85rem; background: #fff;">
+              <!-- Populated dynamically with students from student directory -->
+            </select>
+            <select id="modalStatusSelect" style="flex: 1; min-width: 150px; padding: 0.55rem 0.75rem; border: 1px solid var(--color-linen); border-radius: 4px; font-size: 0.85rem; background: #fff;">
+              <option value="Bench Confirmed">Bench Confirmed</option>
+              <option value="Deposit Paid">Deposit Paid</option>
+              <option value="Waitlist">Waitlist</option>
+            </select>
+            <button onclick="assignStudentToCurrentEvent()" class="btn btn-primary btn-sm" style="white-space: nowrap;">
+              Assign Bench Seat
+            </button>
+          </div>
+        </div>
+
+        <!-- Current Attendees List -->
+        <h4 style="margin: 0 0 0.75rem 0; font-size: 0.95rem; color: var(--color-navy);">
+          👥 Registered Session Attendees
+        </h4>
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;" id="modalRosterTable">
+            <thead>
+              <tr style="background: var(--color-parchment-light); border-bottom: 1px solid var(--color-linen); text-align: left;">
+                <th style="padding: 0.6rem 0.75rem;">Student Name &amp; Contact</th>
+                <th style="padding: 0.6rem 0.75rem;">Status</th>
+                <th style="padding: 0.6rem 0.75rem;">Date Added</th>
+                <th style="padding: 0.6rem 0.75rem; text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="modalRosterTableBody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <div style="margin-top: 1.5rem; text-align: right;">
+          <button onclick="closeRosterModal()" class="btn btn-outline btn-sm">
+            Done &amp; Close Roster
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // =========================================================================
+    // 1. DATA MODELS & STATE
+    // =========================================================================
+
+    // Video Classroom Curriculum Data
     const sampleLessons = [
-      { id: 1, title: "Lesson 1: Anatomy of the Sewing Machine & Essential Tools", dur: "12m", completed: true },
-      { id: 2, title: "Lesson 2: Cleaning the Shuttle Race & Bobbin Case", dur: "15m", completed: true },
-      { id: 3, title: "Lesson 3: Needle-to-Hook Timing Demystified", dur: "18m", completed: false },
-      { id: 4, title: "Lesson 4: Calibrating Upper & Lower Thread Tension", dur: "14m", completed: false },
-      { id: 5, title: "Lesson 5: Feed Dog Height & Material Transport", dur: "16m", completed: false },
-      { id: 6, title: "Lesson 6: Motor Drive Belts & Lubrication Chemistry", dur: "20m", completed: false },
-      { id: 7, title: "Lesson 7: The Master Diagnostic Checklist", dur: "15m", completed: false }
+      { id: 1, title: "Lesson 1: Anatomy of the Sewing Machine & Essential Tools", dur: "12m", completed: true, is_preview: true },
+      { id: 2, title: "Lesson 2: Cleaning the Shuttle Race & Bobbin Case", dur: "15m", completed: true, is_preview: false },
+      { id: 3, title: "Lesson 3: Needle-to-Hook Timing Demystified", dur: "18m", completed: false, is_preview: false },
+      { id: 4, title: "Lesson 4: Calibrating Upper & Lower Thread Tension", dur: "14m", completed: false, is_preview: false },
+      { id: 5, title: "Lesson 5: Feed Dog Height & Material Transport", dur: "16m", completed: false, is_preview: false },
+      { id: 6, title: "Lesson 6: Motor Drive Belts & Lubrication Chemistry", dur: "20m", completed: false, is_preview: false },
+      { id: 7, title: "Lesson 7: The Master Diagnostic Checklist", dur: "15m", completed: false, is_preview: false }
     ];
 
-    let currentLessonIdx = 2; // Lesson 3
+    let currentLessonIdx = 2; // Lesson 3 active by default
+
+    // Registered Students Data
+    let studentsData = [
+      { name: "Sarah Jenkins", email: "student@sewingmachinesinstitute.com", source: "Website", free: true, pro1: true, pro2: false, live: false, industrial: false },
+      { name: "Eleanor Vance", email: "eleanor.vance@example.com", source: "Imported", free: true, pro1: true, pro2: false, live: false, industrial: false },
+      { name: "Marcus Thorne", email: "marcus.thorne@example.com", source: "Imported", free: true, pro1: false, pro2: false, live: true, industrial: false },
+      { name: "Beatrice Holt", email: "beatrice.holt@example.com", source: "Imported", free: true, pro1: false, pro2: true, live: false, industrial: false },
+      { name: "Daniel Kincaid", email: "daniel.kincaid@example.com", source: "Imported", free: true, pro1: false, pro2: false, live: false, industrial: true },
+      { name: "Arthur Pendleton", email: "arthur.pendleton@example.com", source: "Imported", free: true, pro1: true, pro2: false, live: false, industrial: false }
+    ];
+
+    // Live Bench Immersion Events Data
+    let liveEventsData = [
+      {
+        id: "evt-1",
+        dates: "March 17 – 21, 2026",
+        title: "5-Day Live Master Technician",
+        location: "Temple, TX Bench Studio",
+        maxSeats: 6,
+        price: 1895,
+        attendees: [
+          { name: "Marcus Thorne", email: "marcus.thorne@example.com", status: "Bench Confirmed", date: "2026-02-14" },
+          { name: "Clara Higgins", email: "clara.higgins@example.com", status: "Bench Confirmed", date: "2026-02-18" },
+          { name: "James Caldwell", email: "j.caldwell@example.com", status: "Bench Confirmed", date: "2026-02-20" },
+          { name: "Patricia Boone", email: "patricia.b@example.com", status: "Deposit Paid", date: "2026-02-22" }
+        ]
+      },
+      {
+        id: "evt-2",
+        dates: "April 14 – 18, 2026",
+        title: "5-Day Live Master Technician",
+        location: "Temple, TX Bench Studio",
+        maxSeats: 6,
+        price: 1895,
+        attendees: [
+          { name: "Robert Lang", email: "robert.lang@example.com", status: "Bench Confirmed", date: "2026-02-25" },
+          { name: "Nancy Cooper", email: "n.cooper@example.com", status: "Deposit Paid", date: "2026-02-26" }
+        ]
+      },
+      {
+        id: "evt-3",
+        dates: "May 12 – 16, 2026",
+        title: "5-Day Live Master Technician",
+        location: "Temple, TX Bench Studio",
+        maxSeats: 6,
+        price: 1895,
+        attendees: [
+          { name: "Franklin Rhodes", email: "franklin.r@example.com", status: "Deposit Paid", date: "2026-02-27" }
+        ]
+      },
+      {
+        id: "evt-4",
+        dates: "June 16 – 20, 2026",
+        title: "5-Day Live Master Technician",
+        location: "Temple, TX Bench Studio",
+        maxSeats: 6,
+        price: 1895,
+        attendees: []
+      }
+    ];
+
+    let activeRosterEventId = null;
+
+    // Default CMS Data for Main Website
+    const defaultCmsData = {
+      heroPill: "The Encouraging Master • 30 Years of Bench Wisdom",
+      heroTitle: "Master the Machine. <br /><span class=\"text-copper\">Preserve the Craft.</span>",
+      heroDesc: "There is a rhythmic satisfaction in a sewing machine that hums perfectly. At the Institute, we pull back the curtain on the mechanics of sewing—turning \"broken\" into \"beautiful\" one gear at a time. Whether you're maintaining an heirloom, building self-sufficiency, or launching a respected trade, there is a place for you at our bench.",
+      heroCtaText: "Claim Your Seat at the Bench",
+      priceLive: 1895,
+      pricePro1: 699,
+      pricePro2: 499,
+      priceConsult: 150,
+      calculatorRate: 110,
+      location: "Temple, Texas, USA",
+      hours: "Mon – Sat, 8:00 AM – 6:00 PM CST"
+    };
+
+    // =========================================================================
+    // 2. VIDEO CLASSROOM LOGIC
+    // =========================================================================
 
     function renderCurriculum() {
       const list = document.getElementById('curriculumList');
+      if (!list) return;
       list.innerHTML = '';
 
       sampleLessons.forEach((l, idx) => {
@@ -508,8 +997,13 @@
             ${l.completed ? '&#10003;' : ''}
           </div>
           <div style="flex: 1;">
-            <div style="font-size: 0.85rem; line-height: 1.3; margin-bottom: 0.2rem;">${l.title}</div>
-            <div style="font-size: 0.725rem; color: #8A9CAE;">⏱️ ${l.dur} &bull; Video Lecture</div>
+            <div style="font-size: 0.85rem; font-weight: 600; line-height: 1.35; color: ${idx === currentLessonIdx ? 'var(--color-navy)' : '#334155'};">
+              ${l.title}
+            </div>
+            <div style="font-size: 0.725rem; color: var(--color-slate); margin-top: 0.2rem; display: flex; align-items: center; gap: 0.5rem;">
+              <span>⏱️ ${l.dur}</span>
+              ${l.is_preview ? '<span class="badge-pill" style="padding: 1px 5px; font-size: 9px; background: rgba(126,176,155,0.2); color: #2D6A4F;">Preview</span>' : ''}
+            </div>
           </div>
         `;
         list.appendChild(row);
@@ -520,45 +1014,65 @@
 
     function selectLesson(idx) {
       currentLessonIdx = idx;
-      const lesson = sampleLessons[idx];
-      document.getElementById('activeVideoTitle').innerText = lesson.title;
-      document.getElementById('activeLessonHeading').innerText = lesson.title;
-      document.getElementById('tabNotesTitle').innerText = 'Mechanical Overview: ' + lesson.title;
-      document.getElementById('completeBtn').innerText = lesson.completed ? '✓ Lesson Completed' : 'Mark Lesson Complete';
+      const l = sampleLessons[idx];
+      document.getElementById('activeLessonHeading').innerText = l.title;
+      document.getElementById('activeVideoTitle').innerText = l.title;
+      document.getElementById('tabNotesTitle').innerText = 'Mechanical Overview: ' + l.title;
+
+      const completeBtn = document.getElementById('completeBtn');
+      if (l.completed) {
+        completeBtn.innerText = '✓ Lesson Completed';
+        completeBtn.style.background = 'rgba(126, 176, 155, 0.25)';
+        completeBtn.style.borderColor = 'var(--color-mint)';
+        completeBtn.style.color = 'var(--color-mint)';
+      } else {
+        completeBtn.innerText = 'Mark Lesson Complete';
+        completeBtn.style.background = 'transparent';
+        completeBtn.style.borderColor = 'var(--color-mint)';
+        completeBtn.style.color = '#FAF3EA';
+      }
+
       renderCurriculum();
     }
 
     function toggleLessonComplete() {
-      const l = sampleLessons[currentLessonIdx];
-      l.completed = !l.completed;
-      document.getElementById('completeBtn').innerText = l.completed ? '✓ Lesson Completed' : 'Mark Lesson Complete';
-      renderCurriculum();
+      sampleLessons[currentLessonIdx].completed = !sampleLessons[currentLessonIdx].completed;
+      selectLesson(currentLessonIdx);
     }
 
     function toggleCheck(idx, e) {
       e.stopPropagation();
       sampleLessons[idx].completed = !sampleLessons[idx].completed;
-      renderCurriculum();
+      if (idx === currentLessonIdx) {
+        selectLesson(idx);
+      } else {
+        renderCurriculum();
+      }
     }
 
     function nextLesson() {
       if (currentLessonIdx < sampleLessons.length - 1) {
         selectLesson(currentLessonIdx + 1);
       } else {
-        alert('Congratulations! You have completed all lessons in this module.');
+        alert('🎉 Congratulations! You have reached the final lesson of this blueprint!');
       }
     }
 
     function updateProgressStats() {
-      const completed = sampleLessons.filter(l => l.completed).length;
-      const total = sampleLessons.length;
-      const pct = Math.round((completed / total) * 100);
+      const completedCount = sampleLessons.filter(l => l.completed).length;
+      const totalCount = sampleLessons.length;
+      const pct = Math.round((completedCount / totalCount) * 100);
 
-      document.getElementById('progressBadge').innerText = `${completed} / ${total} Completed`;
-      document.getElementById('progressBar').style.width = pct + '%';
+      const pb = document.getElementById('progressBadge');
+      if (pb) pb.innerText = `${completedCount} / ${totalCount} Completed`;
+
+      const dashPct = document.getElementById('dashCoursePct');
+      if (dashPct) dashPct.innerText = `${pct}% Complete (${completedCount}/${totalCount} Lessons)`;
+
+      const dashBar = document.getElementById('dashCourseBar');
+      if (dashBar) dashBar.style.width = pct + '%';
     }
 
-    // Dynamic Floating Watermark Animation
     function animateWatermark() {
       const wm = document.getElementById('demoWatermark');
       const box = document.getElementById('videoBox');
@@ -575,57 +1089,399 @@
       e.preventDefault();
     }
 
-    // Mode Switcher (Classroom vs Dashboard vs Admin)
+    // Main Top Navigation Mode Switcher (Classroom vs Dashboard vs Admin)
     function setMode(mode) {
       ['classroom', 'dashboard', 'admin'].forEach(m => {
-        document.getElementById('view-' + m).style.display = m === mode ? (m === 'classroom' ? 'grid' : 'block') : 'none';
+        const view = document.getElementById('view-' + m);
+        if (view) {
+          view.style.display = m === mode ? (m === 'classroom' ? 'grid' : 'block') : 'none';
+        }
         const btn = document.getElementById('btn-mode-' + m);
-        if (m === mode) {
-          btn.classList.add('active');
-        } else {
-          btn.classList.remove('active');
+        if (btn) {
+          if (m === mode) btn.classList.add('active');
+          else btn.classList.remove('active');
         }
       });
       window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (mode === 'admin') {
+        renderLiveEventsTable();
+        renderAdminTable();
+        renderAdminLessons();
+        loadCmsForm();
+        updateGlobalAdminStats();
+      }
     }
 
-    // Tab Switcher
     function switchTab(tab) {
       ['notes', 'blueprints', 'qa'].forEach(t => {
         const btn = document.getElementById('tab-btn-' + t);
         const pane = document.getElementById('tab-pane-' + t);
-        if (t === tab) {
-          btn.style.color = 'var(--color-copper)';
-          btn.style.borderBottomColor = 'var(--color-copper)';
-          pane.style.display = 'block';
-        } else {
-          btn.style.color = 'var(--color-slate)';
-          btn.style.borderBottomColor = 'transparent';
-          pane.style.display = 'none';
+        if (btn && pane) {
+          if (t === tab) {
+            btn.style.color = 'var(--color-copper)';
+            btn.style.borderBottomColor = 'var(--color-copper)';
+            pane.style.display = 'block';
+          } else {
+            btn.style.color = 'var(--color-slate)';
+            btn.style.borderBottomColor = 'transparent';
+            pane.style.display = 'none';
+          }
         }
       });
     }
 
-    // Admin Users Table Data
-    const studentsData = [
-      { name: "Sarah Jenkins", email: "student@sewingmachinesinstitute.com", source: "Website", free: true, pro1: true, pro2: false, live: false },
-      { name: "Eleanor Vance", email: "eleanor.vance@example.com", source: "Imported", free: true, pro1: true, pro2: false, live: false },
-      { name: "Marcus Thorne", email: "marcus.thorne@example.com", source: "Imported", free: true, pro1: false, pro2: false, live: true },
-      { name: "Beatrice Holt", email: "beatrice.holt@example.com", source: "Imported", free: true, pro1: false, pro2: true, live: false },
-      { name: "Daniel Kincaid", email: "daniel.kincaid@example.com", source: "Imported", free: true, pro1: false, pro2: false, live: false, industrial: true },
-      { name: "Arthur Pendleton", email: "arthur.pendleton@example.com", source: "Imported", free: true, pro1: true, pro2: false, live: false }
-    ];
+    // =========================================================================
+    // 3. ADMIN STUDIO SUB-TABS & GLOBAL STATS
+    // =========================================================================
+
+    function setAdminSubTab(subTab) {
+      const tabs = ['events', 'students', 'courses', 'cms', 'settings'];
+      tabs.forEach(t => {
+        const panel = document.getElementById('admin-panel-' + t);
+        const btn = document.getElementById('admin-subtab-btn-' + t);
+        if (panel) {
+          panel.style.display = t === subTab ? 'block' : 'none';
+        }
+        if (btn) {
+          if (t === subTab) {
+            btn.style.color = 'var(--color-copper)';
+            btn.style.borderBottomColor = 'var(--color-copper)';
+            btn.classList.add('active');
+          } else {
+            btn.style.color = 'var(--color-slate)';
+            btn.style.borderBottomColor = 'transparent';
+            btn.classList.remove('active');
+          }
+        }
+      });
+    }
+
+    function updateGlobalAdminStats() {
+      const statStudents = document.getElementById('statStudents');
+      if (statStudents) statStudents.innerText = `${studentsData.length} Profiles`;
+
+      let totalEnrollments = 0;
+      studentsData.forEach(s => {
+        if (s.free) totalEnrollments++;
+        if (s.pro1) totalEnrollments++;
+        if (s.pro2) totalEnrollments++;
+        if (s.live) totalEnrollments++;
+        if (s.industrial) totalEnrollments++;
+      });
+      const statEnrollments = document.getElementById('statEnrollments');
+      if (statEnrollments) statEnrollments.innerText = `${totalEnrollments} Active`;
+
+      const statLiveSessions = document.getElementById('statLiveSessions');
+      if (statLiveSessions) statLiveSessions.innerText = `${liveEventsData.length} Scheduled`;
+
+      let totalSeats = 0;
+      let filledSeats = 0;
+      liveEventsData.forEach(e => {
+        totalSeats += e.maxSeats;
+        filledSeats += e.attendees ? e.attendees.length : 0;
+      });
+      const pctFill = totalSeats > 0 ? Math.round((filledSeats / totalSeats) * 100) : 0;
+      const statBenchFill = document.getElementById('statBenchFill');
+      if (statBenchFill) statBenchFill.innerText = `${filledSeats} / ${totalSeats} Seats (${pctFill}%)`;
+    }
+
+    // =========================================================================
+    // 4. LIVE BENCH IMMERSION EVENTS & ROSTERS
+    // =========================================================================
+
+    function renderLiveEventsTable() {
+      const tbody = document.getElementById('liveEventsTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      liveEventsData.forEach((evt, idx) => {
+        const filled = evt.attendees ? evt.attendees.length : 0;
+        const available = Math.max(0, evt.maxSeats - filled);
+        const pct = Math.min(100, Math.round((filled / evt.maxSeats) * 100));
+
+        let badgeStyle = '';
+        let badgeText = '';
+
+        if (available === 0) {
+          badgeStyle = 'background: rgba(27, 38, 59, 0.12); color: var(--color-navy); border: 1px solid var(--color-navy);';
+          badgeText = 'Sold Out (Full Bench)';
+        } else if (available <= 2) {
+          badgeStyle = 'background: rgba(155, 94, 60, 0.15); color: var(--color-copper); border: 1px solid var(--color-copper);';
+          badgeText = `${available} Seats Left`;
+        } else if (filled === 0) {
+          badgeStyle = 'background: rgba(126, 176, 155, 0.2); color: #2D6A4F; border: 1px solid var(--color-mint);';
+          badgeText = 'Open Registration';
+        } else {
+          badgeStyle = 'background: rgba(126, 176, 155, 0.2); color: #2D6A4F; border: 1px solid var(--color-mint);';
+          badgeText = `${available} Seats Left`;
+        }
+
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid var(--color-linen)';
+        tr.innerHTML = `
+          <td style="padding: 1rem;">
+            <strong style="color: var(--color-navy); font-size: 1rem; display: block;">${evt.dates}</strong>
+            <span style="font-size: 0.8rem; color: var(--color-copper); font-weight: 700;">${evt.title} &bull; $${evt.price}</span>
+          </td>
+          <td style="padding: 1rem; color: var(--color-slate); font-size: 0.85rem;">
+            ${evt.location}
+          </td>
+          <td style="padding: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <div style="flex: 1; min-width: 100px; height: 8px; background: rgba(27,38,59,0.08); border-radius: 999px; overflow: hidden;">
+                <div style="height: 100%; width: ${pct}%; background: ${available <= 1 ? 'var(--color-copper)' : 'var(--color-mint)'};"></div>
+              </div>
+              <span style="font-size: 0.8rem; font-weight: 700; color: var(--color-navy);">${filled} / ${evt.maxSeats}</span>
+            </div>
+          </td>
+          <td style="padding: 1rem;">
+            <span class="badge-pill" style="font-size: 11px; ${badgeStyle}">
+              ${badgeText}
+            </span>
+          </td>
+          <td style="padding: 1rem; text-align: right;">
+            <div style="display: inline-flex; gap: 0.5rem;">
+              <button onclick="openRosterModal('${evt.id}')" class="btn btn-primary btn-sm" style="font-size: 11px; padding: 0.35rem 0.65rem;">
+                👥 Manage Roster (${filled})
+              </button>
+              <button onclick="deleteLiveEvent('${evt.id}')" class="btn btn-outline btn-sm" style="font-size: 11px; padding: 0.35rem 0.5rem; color: #c92a2a; border-color: #fcc2d7;">
+                🗑️
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      updateGlobalAdminStats();
+    }
+
+    function toggleNewEventForm() {
+      const form = document.getElementById('newEventFormContainer');
+      const btn = document.getElementById('btnToggleNewEvent');
+      if (form.style.display === 'none' || form.style.display === '') {
+        form.style.display = 'block';
+        btn.innerHTML = '<span>✕</span> <span>Close Form</span>';
+      } else {
+        form.style.display = 'none';
+        btn.innerHTML = '<span>➕</span> <span>Build New Live Event</span>';
+      }
+    }
+
+    function handleCreateLiveEvent(e) {
+      e.preventDefault();
+      const dates = document.getElementById('eventDatesInput').value.trim();
+      const title = document.getElementById('eventTitleInput').value;
+      const location = document.getElementById('eventLocationInput').value.trim();
+      const maxSeats = parseInt(document.getElementById('eventMaxSeatsInput').value, 10) || 6;
+      const price = parseFloat(document.getElementById('eventPriceInput').value) || 1895;
+
+      const newId = 'evt-' + (Date.now());
+      liveEventsData.push({
+        id: newId,
+        dates: dates,
+        title: title,
+        location: location,
+        maxSeats: maxSeats,
+        price: price,
+        attendees: []
+      });
+
+      toggleNewEventForm();
+      document.getElementById('eventDatesInput').value = '';
+      renderLiveEventsTable();
+      saveCmsToStorage(); // automatically syncs to main site
+      alert(`🎉 New live cohort created!\n"${dates} - ${title}" at ${location} with ${maxSeats} seats.`);
+    }
+
+    function deleteLiveEvent(id) {
+      const evt = liveEventsData.find(e => e.id === id);
+      if (!evt) return;
+      if (confirm(`Are you sure you want to cancel and remove the live cohort:\n"${evt.dates} - ${evt.title}"?`)) {
+        liveEventsData = liveEventsData.filter(e => e.id !== id);
+        renderLiveEventsTable();
+        saveCmsToStorage();
+      }
+    }
+
+    // Modal: Live Attendee Roster Manager
+    function openRosterModal(eventId) {
+      activeRosterEventId = eventId;
+      const evt = liveEventsData.find(e => e.id === eventId);
+      if (!evt) return;
+
+      const modal = document.getElementById('rosterModal');
+      document.getElementById('modalEventTitle').innerText = `${evt.dates} • ${evt.title}`;
+
+      updateModalRosterView();
+      modal.style.display = 'flex';
+    }
+
+    function closeRosterModal() {
+      const modal = document.getElementById('rosterModal');
+      modal.style.display = 'none';
+      activeRosterEventId = null;
+    }
+
+    function updateModalRosterView() {
+      const evt = liveEventsData.find(e => e.id === activeRosterEventId);
+      if (!evt) return;
+
+      const filled = evt.attendees ? evt.attendees.length : 0;
+      const available = Math.max(0, evt.maxSeats - filled);
+      const pct = Math.min(100, Math.round((filled / evt.maxSeats) * 100));
+
+      document.getElementById('modalCapacityText').innerText = `${filled} of ${evt.maxSeats} Workbenches Reserved`;
+      document.getElementById('modalSeatsRemainingText').innerText = `${available} Workbench Seats Remaining (${evt.location})`;
+      const bar = document.getElementById('modalCapacityBar');
+      bar.style.width = pct + '%';
+      bar.style.background = available <= 1 ? 'var(--color-copper)' : 'var(--color-mint)';
+
+      // Populate student selector with students not yet in this session
+      const sel = document.getElementById('modalStudentSelect');
+      sel.innerHTML = '<option value="">-- Choose Student from Directory --</option>';
+      studentsData.forEach(s => {
+        const isEnrolled = evt.attendees.some(a => a.email.toLowerCase() === s.email.toLowerCase());
+        if (!isEnrolled) {
+          sel.innerHTML += `<option value="${s.email}">${s.name} (${s.email})</option>`;
+        }
+      });
+
+      // Populate attendees table
+      const tbody = document.getElementById('modalRosterTableBody');
+      tbody.innerHTML = '';
+
+      if (evt.attendees.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4" style="text-align: center; padding: 2rem; color: var(--color-slate); font-style: italic;">
+              No students currently registered for this cohort. Use the box above to assign students to a workbench seat.
+            </td>
+          </tr>
+        `;
+      } else {
+        evt.attendees.forEach(a => {
+          const tr = document.createElement('tr');
+          tr.style.borderBottom = '1px solid var(--color-linen)';
+          tr.innerHTML = `
+            <td style="padding: 0.75rem;">
+              <strong style="color: var(--color-navy); display: block;">${a.name}</strong>
+              <span style="font-size: 0.8rem; color: var(--color-slate);">${a.email}</span>
+            </td>
+            <td style="padding: 0.75rem;">
+              <span class="badge-pill" style="font-size: 10px; background: rgba(126, 176, 155, 0.2); color: #2D6A4F;">
+                ✓ ${a.status || 'Bench Confirmed'}
+              </span>
+            </td>
+            <td style="padding: 0.75rem; color: var(--color-slate); font-size: 0.8rem;">
+              ${a.date || '2026-02-28'}
+            </td>
+            <td style="padding: 0.75rem; text-align: right;">
+              <button onclick="removeStudentFromCurrentEvent('${a.email}')" class="btn btn-outline btn-sm" style="font-size: 10px; padding: 0.2rem 0.5rem; color: #c92a2a; border-color: #fcc2d7;">
+                ✕ Remove Seat
+              </button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+    }
+
+    function assignStudentToCurrentEvent() {
+      if (!activeRosterEventId) return;
+      const evt = liveEventsData.find(e => e.id === activeRosterEventId);
+      if (!evt) return;
+
+      const sel = document.getElementById('modalStudentSelect');
+      const email = sel.value;
+      if (!email) {
+        alert('Please choose a student from the directory dropdown.');
+        return;
+      }
+
+      if (evt.attendees.length >= evt.maxSeats) {
+        alert(`This session has reached its strict capacity limit of ${evt.maxSeats} workbenches!`);
+        return;
+      }
+
+      const student = studentsData.find(s => s.email.toLowerCase() === email.toLowerCase());
+      if (!student) return;
+
+      const status = document.getElementById('modalStatusSelect').value;
+      const today = new Date().toISOString().split('T')[0];
+
+      evt.attendees.push({
+        name: student.name,
+        email: student.email,
+        status: status,
+        date: today
+      });
+
+      // Grant Live Bench course entitlement automatically
+      student.live = true;
+
+      updateModalRosterView();
+      renderLiveEventsTable();
+      renderAdminTable();
+      saveCmsToStorage();
+      alert(`✓ Success: ${student.name} assigned to a workbench seat for ${evt.dates}!`);
+    }
+
+    function removeStudentFromCurrentEvent(email) {
+      if (!activeRosterEventId) return;
+      const evt = liveEventsData.find(e => e.id === activeRosterEventId);
+      if (!evt) return;
+
+      if (confirm(`Remove ${email} from this live session? Their workbench seat will be released.`)) {
+        evt.attendees = evt.attendees.filter(a => a.email.toLowerCase() !== email.toLowerCase());
+
+        // Check if student has other live events; if not, toggle live pill
+        const otherLive = liveEventsData.some(e => e.attendees.some(a => a.email.toLowerCase() === email.toLowerCase()));
+        if (!otherLive) {
+          const student = studentsData.find(s => s.email.toLowerCase() === email.toLowerCase());
+          if (student) student.live = false;
+        }
+
+        updateModalRosterView();
+        renderLiveEventsTable();
+        renderAdminTable();
+        saveCmsToStorage();
+      }
+    }
+
+    // =========================================================================
+    // 5. STUDENT DIRECTORY & COURSE ACCESS
+    // =========================================================================
+
+    let currentStudentFilter = "";
+
+    function handleStudentSearch(val) {
+      currentStudentFilter = val.trim().toLowerCase();
+      renderAdminTable();
+    }
 
     function renderAdminTable() {
       const tbody = document.getElementById('studentTableBody');
+      if (!tbody) return;
       tbody.innerHTML = '';
 
-      studentsData.forEach(s => {
+      const filtered = studentsData.filter(s => {
+        if (!currentStudentFilter) return true;
+        return s.name.toLowerCase().includes(currentStudentFilter) || s.email.toLowerCase().includes(currentStudentFilter);
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: var(--color-slate);">No students match "${currentStudentFilter}".</td></tr>`;
+        return;
+      }
+
+      filtered.forEach((s, idx) => {
         const tr = document.createElement('tr');
         tr.style.borderBottom = '1px solid var(--color-linen)';
         tr.innerHTML = `
           <td style="padding: 0.9rem 1rem;">
-            <strong style="color: var(--color-navy); display: block;">${s.name}</strong>
+            <strong style="color: var(--color-navy); display: block; font-size: 0.95rem;">${s.name}</strong>
             <span style="font-size: 0.8rem; color: var(--color-slate);">${s.email}</span>
           </td>
           <td style="padding: 0.9rem 1rem;">
@@ -635,47 +1491,273 @@
           </td>
           <td style="padding: 0.9rem 1rem;">
             <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
-              <button onclick="togglePill(this)" class="badge-pill" style="cursor: pointer; font-size: 10px; border: 1px solid var(--color-mint); background: rgba(126, 176, 155, 0.2); color: #2D6A4F;">
-                ✓ Free 7-Step
+              <button onclick="toggleStudentEntitlement('${s.email}', 'free')" class="badge-pill" style="cursor: pointer; font-size: 10px; border: 1px solid ${s.free ? 'var(--color-mint)' : 'var(--color-linen)'}; background: ${s.free ? 'rgba(126, 176, 155, 0.2)' : 'rgba(27, 38, 59, 0.08)'}; color: ${s.free ? '#2D6A4F' : 'var(--color-navy)'};">
+                ${s.free ? '✓ ' : ''}Free 7-Step
               </button>
-              <button onclick="togglePill(this)" class="badge-pill" style="cursor: pointer; font-size: 10px; border: 1px solid ${s.pro1 ? 'var(--color-mint)' : 'var(--color-linen)'}; background: ${s.pro1 ? 'rgba(126, 176, 155, 0.2)' : 'rgba(27, 38, 59, 0.08)'}; color: ${s.pro1 ? '#2D6A4F' : 'var(--color-navy)'};">
+              <button onclick="toggleStudentEntitlement('${s.email}', 'pro1')" class="badge-pill" style="cursor: pointer; font-size: 10px; border: 1px solid ${s.pro1 ? 'var(--color-mint)' : 'var(--color-linen)'}; background: ${s.pro1 ? 'rgba(126, 176, 155, 0.2)' : 'rgba(27, 38, 59, 0.08)'}; color: ${s.pro1 ? '#2D6A4F' : 'var(--color-navy)'};">
                 ${s.pro1 ? '✓ ' : ''}ProTraining 1 ($699)
               </button>
-              <button onclick="togglePill(this)" class="badge-pill" style="cursor: pointer; font-size: 10px; border: 1px solid ${s.pro2 ? 'var(--color-mint)' : 'var(--color-linen)'}; background: ${s.pro2 ? 'rgba(126, 176, 155, 0.2)' : 'rgba(27, 38, 59, 0.08)'}; color: ${s.pro2 ? '#2D6A4F' : 'var(--color-navy)'};">
+              <button onclick="toggleStudentEntitlement('${s.email}', 'pro2')" class="badge-pill" style="cursor: pointer; font-size: 10px; border: 1px solid ${s.pro2 ? 'var(--color-mint)' : 'var(--color-linen)'}; background: ${s.pro2 ? 'rgba(126, 176, 155, 0.2)' : 'rgba(27, 38, 59, 0.08)'}; color: ${s.pro2 ? '#2D6A4F' : 'var(--color-navy)'};">
                 ${s.pro2 ? '✓ ' : ''}ProTraining 2 ($499)
               </button>
-              <button onclick="togglePill(this)" class="badge-pill" style="cursor: pointer; font-size: 10px; border: 1px solid ${s.live ? 'var(--color-mint)' : 'var(--color-linen)'}; background: ${s.live ? 'rgba(126, 176, 155, 0.2)' : 'rgba(27, 38, 59, 0.08)'}; color: ${s.live ? '#2D6A4F' : 'var(--color-navy)'};">
+              <button onclick="toggleStudentEntitlement('${s.email}', 'live')" class="badge-pill" style="cursor: pointer; font-size: 10px; border: 1px solid ${s.live ? 'var(--color-mint)' : 'var(--color-linen)'}; background: ${s.live ? 'rgba(126, 176, 155, 0.2)' : 'rgba(27, 38, 59, 0.08)'}; color: ${s.live ? '#2D6A4F' : 'var(--color-navy)'};">
                 ${s.live ? '✓ ' : ''}5-Day Live Bench
               </button>
+              <button onclick="toggleStudentEntitlement('${s.email}', 'industrial')" class="badge-pill" style="cursor: pointer; font-size: 10px; border: 1px solid ${s.industrial ? 'var(--color-mint)' : 'var(--color-linen)'}; background: ${s.industrial ? 'rgba(126, 176, 155, 0.2)' : 'rgba(27, 38, 59, 0.08)'}; color: ${s.industrial ? '#2D6A4F' : 'var(--color-navy)'};">
+                ${s.industrial ? '✓ ' : ''}Industrial Lockstitch
+              </button>
             </div>
+          </td>
+          <td style="padding: 0.9rem 1rem; text-align: right;">
+            <button onclick="deleteStudentProfile('${s.email}')" class="btn btn-outline btn-sm" style="font-size: 10px; padding: 0.2rem 0.5rem; color: #c92a2a; border-color: #fcc2d7;">
+              ✕ Delete
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      updateGlobalAdminStats();
+    }
+
+    function toggleStudentEntitlement(email, key) {
+      const student = studentsData.find(s => s.email.toLowerCase() === email.toLowerCase());
+      if (student) {
+        student[key] = !student[key];
+        renderAdminTable();
+      }
+    }
+
+    function promptAddNewStudent() {
+      const name = prompt('Enter student full name:');
+      if (!name) return;
+      const email = prompt('Enter student email address:');
+      if (!email) return;
+
+      if (studentsData.some(s => s.email.toLowerCase() === email.toLowerCase())) {
+        alert('A student with this email address already exists!');
+        return;
+      }
+
+      studentsData.unshift({
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        source: "Manual",
+        free: true,
+        pro1: false,
+        pro2: false,
+        live: false,
+        industrial: false
+      });
+
+      renderAdminTable();
+      alert(`✓ Student profile created for ${name}!`);
+    }
+
+    function deleteStudentProfile(email) {
+      const s = studentsData.find(x => x.email.toLowerCase() === email.toLowerCase());
+      if (!s) return;
+      if (confirm(`Delete student profile for "${s.name} (${s.email})"? This will remove their course enrollments.`)) {
+        studentsData = studentsData.filter(x => x.email.toLowerCase() !== email.toLowerCase());
+        // remove from any live event rosters
+        liveEventsData.forEach(evt => {
+          evt.attendees = evt.attendees.filter(a => a.email.toLowerCase() !== email.toLowerCase());
+        });
+        renderAdminTable();
+        renderLiveEventsTable();
+      }
+    }
+
+    function runSampleWixMigration() {
+      alert('⚡ Student Import Simulator:\nSuccessfully parsed 6 customer records from student export!\n- Created 6 student accounts\n- Auto-mapped and granted ProTraining 1, ProTraining 2, Live Bench, and Industrial courses.');
+    }
+
+    // =========================================================================
+    // 6. COURSE & CURRICULUM STUDIO
+    // =========================================================================
+
+    function renderAdminLessons() {
+      const tbody = document.getElementById('adminLessonsTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      sampleLessons.forEach((l, idx) => {
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid var(--color-linen)';
+        tr.innerHTML = `
+          <td style="padding: 0.75rem 1rem; font-weight: bold; color: var(--color-slate);">
+            #${idx + 1}
+          </td>
+          <td style="padding: 0.75rem 1rem;">
+            <strong style="color: var(--color-navy); display: block;">${l.title}</strong>
+          </td>
+          <td style="padding: 0.75rem 1rem; color: var(--color-slate);">
+            ${l.dur}
+          </td>
+          <td style="padding: 0.75rem 1rem;">
+            ${l.is_preview ? '<span class="badge-pill" style="font-size: 10px; background: rgba(126,176,155,0.2); color: #2D6A4F;">Preview</span>' : '<span class="badge-pill" style="font-size: 10px; background: rgba(27,38,59,0.08); color: var(--color-navy);">Locked</span>'}
+          </td>
+          <td style="padding: 0.75rem 1rem; text-align: right;">
+            <button onclick="setMode('classroom'); selectLesson(${idx});" class="btn btn-outline btn-sm" style="font-size: 10px; padding: 0.25rem 0.5rem;">
+              👁️ View
+            </button>
+            <button onclick="deleteLesson(${l.id})" class="btn btn-outline btn-sm" style="font-size: 10px; padding: 0.25rem 0.5rem; color: #c92a2a; border-color: #fcc2d7;">
+              🗑️
+            </button>
           </td>
         `;
         tbody.appendChild(tr);
       });
     }
 
-    function togglePill(btn) {
-      if (btn.innerText.startsWith('✓')) {
-        btn.innerText = btn.innerText.replace('✓ ', '');
-        btn.style.background = 'rgba(27, 38, 59, 0.08)';
-        btn.style.color = 'var(--color-navy)';
-        btn.style.borderColor = 'var(--color-linen)';
-      } else {
-        btn.innerText = '✓ ' + btn.innerText;
-        btn.style.background = 'rgba(126, 176, 155, 0.2)';
-        btn.style.color = '#2D6A4F';
-        btn.style.borderColor = 'var(--color-mint)';
+    function toggleNewLessonForm() {
+      const form = document.getElementById('newLessonFormContainer');
+      form.style.display = form.style.display === 'none' || form.style.display === '' ? 'block' : 'none';
+    }
+
+    function handleCreateLesson(e) {
+      e.preventDefault();
+      const title = document.getElementById('lessonTitleInput').value.trim();
+      const dur = document.getElementById('lessonDurationInput').value.trim();
+      const isPreview = document.getElementById('lessonPreviewInput').value === 'true';
+
+      const newId = sampleLessons.length ? Math.max(...sampleLessons.map(l => l.id)) + 1 : 1;
+      sampleLessons.push({
+        id: newId,
+        title: title,
+        dur: dur,
+        completed: false,
+        is_preview: isPreview
+      });
+
+      document.getElementById('lessonTitleInput').value = '';
+      toggleNewLessonForm();
+      renderAdminLessons();
+      renderCurriculum();
+      alert(`✓ Lesson added: "${title}" (${dur})! It is now live in the Video Classroom.`);
+    }
+
+    function deleteLesson(id) {
+      if (confirm('Delete this lesson from the curriculum?')) {
+        const idx = sampleLessons.findIndex(l => l.id === id);
+        if (idx !== -1) {
+          sampleLessons.splice(idx, 1);
+          if (currentLessonIdx >= sampleLessons.length) currentLessonIdx = Math.max(0, sampleLessons.length - 1);
+          renderAdminLessons();
+          renderCurriculum();
+        }
       }
     }
 
-    function runSampleWixMigration() {
-      alert('⚡ Student Import Simulator:\nSuccessfully imported 6 customer records!\n- Created 6 student accounts\n- Auto-mapped and granted ProTraining 1, ProTraining 2, Live Bench, and Industrial courses.');
+    // =========================================================================
+    // 7. MAIN WEBSITE CMS & SYNC
+    // =========================================================================
+
+    function loadCmsForm() {
+      let cms = defaultCmsData;
+      try {
+        const stored = localStorage.getItem('smi_website_cms');
+        if (stored) cms = Object.assign({}, defaultCmsData, JSON.parse(stored));
+      } catch (e) {}
+
+      document.getElementById('cmsHeroPill').value = cms.heroPill || defaultCmsData.heroPill;
+      document.getElementById('cmsHeroTitle').value = cms.heroTitle.replace(/<[^>]+>/g, '').trim() || "Master the Machine. Preserve the Craft.";
+      document.getElementById('cmsHeroDesc').value = cms.heroDesc || defaultCmsData.heroDesc;
+      document.getElementById('cmsHeroCtaText').value = cms.heroCtaText || defaultCmsData.heroCtaText;
+      document.getElementById('cmsPriceLive').value = cms.priceLive || defaultCmsData.priceLive;
+      document.getElementById('cmsPricePro1').value = cms.pricePro1 || defaultCmsData.pricePro1;
+      document.getElementById('cmsPricePro2').value = cms.pricePro2 || defaultCmsData.pricePro2;
+      document.getElementById('cmsPriceConsult').value = cms.priceConsult || defaultCmsData.priceConsult;
+      document.getElementById('cmsCalculatorRate').value = cms.calculatorRate || defaultCmsData.calculatorRate;
+      document.getElementById('cmsLocation').value = cms.location || defaultCmsData.location;
+      document.getElementById('cmsHours').value = cms.hours || defaultCmsData.hours;
     }
 
-    // Initialize on load
-    renderCurriculum();
-    renderAdminTable();
-  </script>
+    function saveCmsToStorage() {
+      const cms = {
+        heroPill: document.getElementById('cmsHeroPill').value.trim(),
+        heroTitle: document.getElementById('cmsHeroTitle').value.trim(),
+        heroDesc: document.getElementById('cmsHeroDesc').value.trim(),
+        heroCtaText: document.getElementById('cmsHeroCtaText').value.trim(),
+        priceLive: parseFloat(document.getElementById('cmsPriceLive').value) || 1895,
+        pricePro1: parseFloat(document.getElementById('cmsPricePro1').value) || 699,
+        pricePro2: parseFloat(document.getElementById('cmsPricePro2').value) || 499,
+        priceConsult: parseFloat(document.getElementById('cmsPriceConsult').value) || 150,
+        calculatorRate: parseFloat(document.getElementById('cmsCalculatorRate').value) || 110,
+        location: document.getElementById('cmsLocation').value.trim(),
+        hours: document.getElementById('cmsHours').value.trim(),
+        liveEvents: liveEventsData
+      };
 
+      try {
+        localStorage.setItem('smi_website_cms', JSON.stringify(cms));
+        alert('💾 Success! Your website content, live bench schedule, and pricing updates are saved and active across the entire platform!');
+      } catch (e) {
+        console.error('Storage error:', e);
+      }
+    }
+
+    function resetCmsDefaults() {
+      if (confirm('Reset website copy and tuition pricing back to factory defaults?')) {
+        try {
+          localStorage.removeItem('smi_website_cms');
+        } catch (e) {}
+        loadCmsForm();
+        saveCmsToStorage();
+        alert('Reset complete!');
+      }
+    }
+
+    // =========================================================================
+    // 8. DATA BACKUP & EXPORT
+    // =========================================================================
+
+    function exportInstituteData() {
+      const exportBundle = {
+        exportedAt: new Date().toISOString(),
+        platform: "Sewing Machines Institute (FSMI)",
+        students: studentsData,
+        liveEvents: liveEventsData,
+        curriculum: sampleLessons,
+        cmsSettings: {
+          heroPill: document.getElementById('cmsHeroPill') ? document.getElementById('cmsHeroPill').value : '',
+          heroTitle: document.getElementById('cmsHeroTitle') ? document.getElementById('cmsHeroTitle').value : '',
+          heroDesc: document.getElementById('cmsHeroDesc') ? document.getElementById('cmsHeroDesc').value : '',
+          priceLive: document.getElementById('cmsPriceLive') ? document.getElementById('cmsPriceLive').value : 1895
+        }
+      };
+
+      const jsonStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportBundle, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", jsonStr);
+      downloadAnchor.setAttribute("download", `smi_institute_backup_${new Date().toISOString().split('T')[0]}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function resetAllInstituteData() {
+      if (confirm('⚠️ WARNING: This will reset all student records, live bench cohorts, and curriculum changes to initial demo state. Continue?')) {
+        try {
+          localStorage.clear();
+        } catch (e) {}
+        location.reload();
+      }
+    }
+
+    // =========================================================================
+    // 9. INITIALIZATION
+    // =========================================================================
+    renderCurriculum();
+    renderLiveEventsTable();
+    renderAdminTable();
+    renderAdminLessons();
+    loadCmsForm();
+
+    if (window.location.hash === '#admin' || localStorage.getItem('smi_init_mode') === 'admin') {
+      try { localStorage.removeItem('smi_init_mode'); } catch (e) {}
+      setMode('admin');
+    }
+  </script>
 </body>
 </html>
