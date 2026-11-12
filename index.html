@@ -1010,14 +1010,20 @@
               const filled = evt.attendees ? evt.attendees.length : 0;
               const left = Math.max(0, evt.maxSeats - filled);
               let badge = '';
+              let actionHtml = '';
+
               if (left === 0) {
-                badge = '<span class="seat-pill-active" style="background: rgba(27,38,59,0.12); color: var(--color-navy); border: 1px solid var(--color-navy);">Sold Out</span>';
+                badge = '<span class="seat-pill-soldout">Sold Out (Full Bench)</span>';
+                actionHtml = '<button class="btn btn-soldout btn-sm" disabled title="All workbench seats have been filled. Registration is closed.">Sold Out</button>';
               } else if (left <= 2) {
-                badge = `<span class="seat-pill-active" style="background: rgba(155,94,60,0.15); color: var(--color-copper); border: 1px solid var(--color-copper);">${left} Seats Left</span>`;
+                badge = `<span class="seat-pill-low">${left} Seats Left</span>`;
+                actionHtml = '<a href="#contact" class="btn btn-primary btn-sm">Reserve Seat</a>';
               } else if (filled === 0) {
                 badge = '<span class="seat-pill-active">Open Registration</span>';
+                actionHtml = '<a href="#contact" class="btn btn-primary btn-sm">Reserve Seat</a>';
               } else {
                 badge = `<span class="seat-pill-active">${left} Seats Left</span>`;
+                actionHtml = '<a href="#contact" class="btn btn-primary btn-sm">Reserve Seat</a>';
               }
 
               return `
@@ -1026,7 +1032,7 @@
                   <td>${evt.title}</td>
                   <td>${evt.location}</td>
                   <td>${badge}</td>
-                  <td style="text-align: right;"><a href="#contact" class="btn btn-primary btn-sm">Reserve Seat</a></td>
+                  <td style="text-align: right;">${actionHtml}</td>
                 </tr>
               `;
             }).join('');

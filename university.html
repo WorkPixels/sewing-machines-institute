@@ -848,7 +848,7 @@
               <option value="Deposit Paid">Deposit Paid</option>
               <option value="Waitlist">Waitlist</option>
             </select>
-            <button onclick="assignStudentToCurrentEvent()" class="btn btn-primary btn-sm" style="white-space: nowrap;">
+            <button id="btnAssignBenchSeat" onclick="assignStudentToCurrentEvent()" class="btn btn-primary btn-sm" style="white-space: nowrap;">
               Assign Bench Seat
             </button>
           </div>
@@ -1332,11 +1332,38 @@
       const available = Math.max(0, evt.maxSeats - filled);
       const pct = Math.min(100, Math.round((filled / evt.maxSeats) * 100));
 
-      document.getElementById('modalCapacityText').innerText = `${filled} of ${evt.maxSeats} Workbenches Reserved`;
-      document.getElementById('modalSeatsRemainingText').innerText = `${available} Workbench Seats Remaining (${evt.location})`;
+      const assignBtn = document.getElementById('btnAssignBenchSeat');
+      const studentSelect = document.getElementById('modalStudentSelect');
+
+      if (available === 0) {
+        document.getElementById('modalCapacityText').innerHTML = `${filled} of ${evt.maxSeats} Workbenches Reserved <span style="color: var(--color-copper); font-size: 0.85rem; font-weight: bold;">(100% Full)</span>`;
+        document.getElementById('modalSeatsRemainingText').innerHTML = `<span style="color: #c92a2a; font-weight: bold;">⛔ SOLD OUT &bull; All ${evt.maxSeats} workbench seats have been allocated. No more tickets can be sold.</span>`;
+        if (assignBtn) {
+          assignBtn.disabled = true;
+          assignBtn.innerText = '⛔ Sold Out (Full Bench)';
+          assignBtn.style.opacity = '0.5';
+          assignBtn.style.cursor = 'not-allowed';
+        }
+        if (studentSelect) {
+          studentSelect.disabled = true;
+        }
+      } else {
+        document.getElementById('modalCapacityText').innerText = `${filled} of ${evt.maxSeats} Workbenches Reserved`;
+        document.getElementById('modalSeatsRemainingText').innerText = `${available} Workbench Seats Remaining (${evt.location})`;
+        if (assignBtn) {
+          assignBtn.disabled = false;
+          assignBtn.innerText = 'Assign Bench Seat';
+          assignBtn.style.opacity = '1';
+          assignBtn.style.cursor = 'pointer';
+        }
+        if (studentSelect) {
+          studentSelect.disabled = false;
+        }
+      }
+
       const bar = document.getElementById('modalCapacityBar');
       bar.style.width = pct + '%';
-      bar.style.background = available <= 1 ? 'var(--color-copper)' : 'var(--color-mint)';
+      bar.style.background = available === 0 ? 'var(--color-navy)' : (available <= 1 ? 'var(--color-copper)' : 'var(--color-mint)');
 
       // Populate student selector with students not yet in this session
       const sel = document.getElementById('modalStudentSelect');
@@ -1401,7 +1428,7 @@
       }
 
       if (evt.attendees.length >= evt.maxSeats) {
-        alert(`This session has reached its strict capacity limit of ${evt.maxSeats} workbenches!`);
+        alert(`⛔ SOLD OUT: This live session has reached its strict capacity limit of ${evt.maxSeats} workbenches! Registration is closed and no additional tickets can be allocated.`);
         return;
       }
 
