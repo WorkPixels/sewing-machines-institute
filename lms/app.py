@@ -212,7 +212,7 @@ def request_enrollment(course_slug):
     return redirect(url_for('catalog'))
 
 # ==============================================================================
-# COURSERA / UDEMY 2-PANE VIDEO CLASSROOM
+# 2-PANE VIDEO CLASSROOM
 # ==============================================================================
 
 @app.route('/classroom/<course_slug>')

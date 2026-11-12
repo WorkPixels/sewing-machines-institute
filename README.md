@@ -28,7 +28,7 @@
 ---
 
 ### 2. SMI University (Full Learning Suite / LMS)
-An integrated learning management system modeled after the UX of **Coursera**, **Udemy**, and **LinkedIn Learning**:
+A custom institutional learning management suite built with a streamlined 2-pane video learning UX:
 * **Student Dashboard**: Enrolled programs, completion percentage bars, and a *"Continue Where You Left Off"* quick-jump banner.
 * **2-Pane Video Classroom**:
   * **Left Side**: Theater video player, navigation controls, and comprehensive content tabs:
@@ -103,7 +103,7 @@ sewingmachinesinstitute/
 │   ├── video_security.py        # Authenticated streaming proxy & chunker
 │   ├── wix_importer.py          # Wix CSV bulk account migration engine
 │   ├── static/
-│   │   ├── css/lms.css          # Coursera/Udemy theme styles
+│   │   ├── css/lms.css          # University theme & classroom styles
 │   │   ├── js/classroom.js      # Video player, watermarking & tabs
 │   │   └── sample_wix_export.csv# Pre-loaded sample Wix customer export
 │   └── templates/

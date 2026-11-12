@@ -81,9 +81,6 @@
       <button class="tab-nav-btn" id="tab-btn-qa" onclick="switchLessonTab('qa')">
         💬 Ask Jeremiah (Q&amp;A)
       </button>
-      <button class="tab-nav-btn" id="tab-btn-security" onclick="switchLessonTab('security')">
-        🛡️ Anti-Download Security
-      </button>
     </div>
 
     <!-- Tab 1: Workbench Notes -->
@@ -177,36 +174,9 @@
       </div>
     </div>
 
-    <!-- Tab 4: Anti-Download Security Details -->
-    <div class="lesson-tab-body tab-pane-content" id="tab-pane-security" style="display: none;">
-      <div style="max-width: 860px;">
-        <span class="badge-pill badge-mint" style="margin-bottom: 0.75rem;">Digital Rights Management</span>
-        <h3 style="margin-bottom: 0.5rem;">Content Protection Architecture</h3>
-        <p style="color: var(--color-slate); margin-bottom: 1.5rem;">
-          This classroom is built with institutional-grade video security to protect proprietary trade curriculum:
-        </p>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-          <div class="artisan-card" style="padding: 1.5rem;">
-            <h4 style="color: var(--color-navy); margin-bottom: 0.5rem;">🛡️ Dynamic Forensic Watermarking</h4>
-            <p style="font-size: 0.85rem; color: var(--color-slate); margin: 0;">
-              Your student identity (<strong style="color: var(--color-copper);">{{ g.user.name }} - {{ g.user.email }}</strong>) is rendered dynamically across video frames to prevent unauthorized screen captures or rip distribution.
-            </p>
-          </div>
-
-          <div class="artisan-card" style="padding: 1.5rem;">
-            <h4 style="color: var(--color-navy); margin-bottom: 0.5rem;">🔒 Authenticated Streaming Proxy</h4>
-            <p style="font-size: 0.85rem; color: var(--color-slate); margin: 0;">
-              Video data is streamed through authenticated chunked byte-range endpoints (<code style="background: var(--color-linen); padding: 2px 4px; border-radius: 3px;">/api/stream</code>) that verify active database entitlements.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
 
-  <!-- RIGHT PANE: COLLAPSIBLE CURRICULUM DRAWER (UDEMY / COURSERA STYLE) -->
+  <!-- RIGHT PANE: COLLAPSIBLE CURRICULUM DRAWER -->
   <aside class="curriculum-sidebar">
     <div class="curriculum-header">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">

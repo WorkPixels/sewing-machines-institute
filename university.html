@@ -161,13 +161,13 @@
     <!-- Mode Selector Buttons -->
     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
       <button onclick="setMode('classroom')" id="btn-mode-classroom" class="demo-nav-btn active">
-        📺 Video Classroom (Coursera/Udemy UI)
+        📺 Video Classroom
       </button>
       <button onclick="setMode('dashboard')" id="btn-mode-dashboard" class="demo-nav-btn">
         🎓 Student Dashboard
       </button>
       <button onclick="setMode('admin')" id="btn-mode-admin" class="demo-nav-btn">
-        ⚙️ Admin Studio &amp; Wix CSV
+        ⚙️ Admin Studio
       </button>
     </div>
   </div>
@@ -198,14 +198,14 @@
   </header>
 
   <!-- ======================================================================
-       VIEW 1: COURSERA / UDEMY 2-PANE VIDEO CLASSROOM
+       VIEW 1: 2-PANE VIDEO CLASSROOM
        ====================================================================== -->
   <div id="view-classroom" class="classroom-layout">
     
     <!-- Left Pane: Video & Content Tabs -->
     <div class="video-pane">
       
-      <!-- Video Player with Anti-Download Layer & Dynamic Floating Watermark -->
+      <!-- Video Player Container with Dynamic Floating Watermark -->
       <div class="video-box" id="videoBox" oncontextmenu="handleRightClick(event)">
         <!-- Forensic Floating Watermark -->
         <div id="demoWatermark" class="floating-watermark">
@@ -223,10 +223,12 @@
           <p style="font-size: 0.85rem; color: #B4C4D5; margin-top: 0.4rem;">
             Master Technician Jeremiah Trumble &bull; 18:24 Minutes &bull; 1080p Protected Stream
           </p>
-          <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(27, 38, 59, 0.8); border: 1px solid var(--color-mint); padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; color: var(--color-mint); margin-top: 0.75rem;">
-            <span>🛡️ Anti-Download Controls Enabled</span>
+          <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(27, 38, 59, 0.8); border: 1px solid rgba(224, 209, 183, 0.25); padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; color: #FAF3E9; margin-top: 0.75rem;">
+            <span>HD 1080p</span>
             <span>&bull;</span>
-            <span>Forensic Watermarking Active</span>
+            <span>Speed 1.0x</span>
+            <span>&bull;</span>
+            <span>Audio &amp; Closed Captions</span>
           </div>
         </div>
       </div>
@@ -262,9 +264,6 @@
         </button>
         <button onclick="switchTab('qa')" id="tab-btn-qa" style="padding: 1rem 0.5rem; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; background: transparent; border: none; border-bottom: 3px solid transparent; color: var(--color-slate); cursor: pointer;">
           💬 Ask Jeremiah Q&amp;A
-        </button>
-        <button onclick="switchTab('security')" id="tab-btn-security" style="padding: 1rem 0.5rem; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; background: transparent; border: none; border-bottom: 3px solid transparent; color: var(--color-slate); cursor: pointer;">
-          🛡️ Anti-Download Details
         </button>
       </div>
 
@@ -328,22 +327,6 @@
               <strong>Jeremiah Trumble:</strong> &ldquo;Check the thread guide eyelet right above the needle clamp, Robert! Microscopic burrs from broken needles often saw through thread under high tension. Polish it with an emery cord.&rdquo;
             </div>
           </div>
-        </div>
-      </div>
-
-      <!-- Tab Body 4: Security Details -->
-      <div id="tab-pane-security" style="display: none; padding: 2.25rem 1.75rem; background: var(--color-parchment); color: var(--color-text-main); flex: 1;">
-        <div style="max-width: 820px;">
-          <span class="badge-pill" style="background: rgba(126, 176, 155, 0.2); color: #2D6A4F; margin-bottom: 0.75rem;">Anti-Download DRM</span>
-          <h3 style="margin-bottom: 0.5rem;">Institutional Content Protection</h3>
-          <p style="font-size: 0.9rem; color: var(--color-slate); line-height: 1.7;">
-            SMI University uses multi-layered protection mirroring Coursera and LinkedIn Learning:
-          </p>
-          <ul style="font-size: 0.9rem; color: var(--color-slate); line-height: 1.8;">
-            <li><strong>Dynamic Floating Watermark:</strong> Student identity is stamped across video frames to deter camera and screen capture recording.</li>
-            <li><strong>Authenticated Byte-Range Proxy:</strong> Video files are never exposed as direct public URLs; chunks are streamed via <code>/api/stream</code> requiring active session authentication.</li>
-            <li><strong>Browser Restrictions:</strong> Context menus are blocked, download menus stripped, and developer inspection hotkeys intercepted.</li>
-          </ul>
         </div>
       </div>
 
@@ -440,18 +423,18 @@
   </div>
 
   <!-- ======================================================================
-       VIEW 3: ADMIN STUDIO & WIX CSV IMPORTER
+       VIEW 3: ADMIN STUDIO & ACCESS CONTROL
        ====================================================================== -->
   <div id="view-admin" style="display: none; max-width: 1240px; margin: 2.5rem auto; padding: 0 1.5rem;">
     <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid var(--color-linen); padding-bottom: 1.5rem;">
       <div>
         <span class="badge-pill" style="background: rgba(126, 176, 155, 0.2); color: #2D6A4F; margin-bottom: 0.5rem;">⚙️ Admin Studio</span>
         <h1 style="font-size: 2.2rem; margin: 0;">SMI University Management</h1>
-        <p style="color: var(--color-slate); margin-top: 0.25rem;">Control student access, bulk import accounts from Wix, and manage courses.</p>
+        <p style="color: var(--color-slate); margin-top: 0.25rem;">Control student access, bulk import accounts, and manage courses.</p>
       </div>
 
       <button onclick="runSampleWixMigration()" class="btn btn-primary btn-sm">
-        ⚡ Run Sample Wix CSV Migration (6 Students)
+        ⚡ Run Sample Student Import (6 Students)
       </button>
     </div>
 
@@ -470,7 +453,7 @@
         <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: bold; color: var(--color-mint);">5 Programs</div>
       </div>
       <div style="background: #FFFFFF; border: 1px solid var(--color-linen); padding: 1.25rem; border-radius: 8px;">
-        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-slate); font-weight: bold;">Wix Migrated</span>
+        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-slate); font-weight: bold;">Imported Accounts</span>
         <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: bold; color: var(--color-slate);" id="statWix">6 Accounts</div>
       </div>
     </div>
@@ -590,7 +573,6 @@
 
     function handleRightClick(e) {
       e.preventDefault();
-      alert('🛡️ Right-click and direct downloads are disabled by SMI University anti-download security policy.');
     }
 
     // Mode Switcher (Classroom vs Dashboard vs Admin)
@@ -609,7 +591,7 @@
 
     // Tab Switcher
     function switchTab(tab) {
-      ['notes', 'blueprints', 'qa', 'security'].forEach(t => {
+      ['notes', 'blueprints', 'qa'].forEach(t => {
         const btn = document.getElementById('tab-btn-' + t);
         const pane = document.getElementById('tab-pane-' + t);
         if (t === tab) {
@@ -626,12 +608,12 @@
 
     // Admin Users Table Data
     const studentsData = [
-      { name: "Sarah Jenkins", email: "student@sewingmachinesinstitute.com", source: "web", free: true, pro1: true, pro2: false, live: false },
-      { name: "Eleanor Vance", email: "eleanor.vance@example.com", source: "wix_migration", free: true, pro1: true, pro2: false, live: false },
-      { name: "Marcus Thorne", email: "marcus.thorne@example.com", source: "wix_migration", free: true, pro1: false, pro2: false, live: true },
-      { name: "Beatrice Holt", email: "beatrice.holt@example.com", source: "wix_migration", free: true, pro1: false, pro2: true, live: false },
-      { name: "Daniel Kincaid", email: "daniel.kincaid@example.com", source: "wix_migration", free: true, pro1: false, pro2: false, live: false, industrial: true },
-      { name: "Arthur Pendleton", email: "arthur.pendleton@example.com", source: "wix_migration", free: true, pro1: true, pro2: false, live: false }
+      { name: "Sarah Jenkins", email: "student@sewingmachinesinstitute.com", source: "Website", free: true, pro1: true, pro2: false, live: false },
+      { name: "Eleanor Vance", email: "eleanor.vance@example.com", source: "Imported", free: true, pro1: true, pro2: false, live: false },
+      { name: "Marcus Thorne", email: "marcus.thorne@example.com", source: "Imported", free: true, pro1: false, pro2: false, live: true },
+      { name: "Beatrice Holt", email: "beatrice.holt@example.com", source: "Imported", free: true, pro1: false, pro2: true, live: false },
+      { name: "Daniel Kincaid", email: "daniel.kincaid@example.com", source: "Imported", free: true, pro1: false, pro2: false, live: false, industrial: true },
+      { name: "Arthur Pendleton", email: "arthur.pendleton@example.com", source: "Imported", free: true, pro1: true, pro2: false, live: false }
     ];
 
     function renderAdminTable() {
@@ -647,7 +629,7 @@
             <span style="font-size: 0.8rem; color: var(--color-slate);">${s.email}</span>
           </td>
           <td style="padding: 0.9rem 1rem;">
-            <span class="badge-pill" style="font-size: 10px; background: ${s.source === 'wix_migration' ? 'rgba(155, 94, 60, 0.15)' : 'rgba(126, 176, 155, 0.2)'}; color: ${s.source === 'wix_migration' ? 'var(--color-copper)' : '#2D6A4F'};">
+            <span class="badge-pill" style="font-size: 10px; background: ${s.source === 'Imported' ? 'rgba(155, 94, 60, 0.15)' : 'rgba(126, 176, 155, 0.2)'}; color: ${s.source === 'Imported' ? 'var(--color-copper)' : '#2D6A4F'};">
               ${s.source}
             </span>
           </td>
@@ -687,7 +669,7 @@
     }
 
     function runSampleWixMigration() {
-      alert('⚡ Wix CSV Migration Simulator:\nSuccessfully parsed 6 customer records from Wix Orders export!\n- Created 6 student accounts\n- Auto-mapped and granted ProTraining 1, ProTraining 2, Live Bench, and Industrial courses.');
+      alert('⚡ Student Import Simulator:\nSuccessfully imported 6 customer records!\n- Created 6 student accounts\n- Auto-mapped and granted ProTraining 1, ProTraining 2, Live Bench, and Industrial courses.');
     }
 
     // Initialize on load
