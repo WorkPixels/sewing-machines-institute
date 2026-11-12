@@ -824,10 +824,19 @@
 
       <div style="padding: 1.5rem;">
         <!-- Capacity Bar in Modal -->
-        <div style="background: var(--color-parchment-light); border: 1px solid var(--color-linen); padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
-          <div>
-            <strong style="color: var(--color-navy); font-size: 1.05rem;" id="modalCapacityText">4 of 6 Workbenches Reserved</strong>
-            <div style="font-size: 0.85rem; color: var(--color-slate); margin-top: 0.15rem;" id="modalSeatsRemainingText">2 Workbench Seats Remaining</div>
+        <div style="background: var(--color-parchment-light); border: 1px solid var(--color-linen); padding: 1.25rem; border-radius: 8px; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <div style="flex: 1; min-width: 260px;">
+            <strong style="color: var(--color-navy); font-size: 1.1rem; display: block;" id="modalCapacityText">4 of 6 Workbenches Reserved</strong>
+            <div style="font-size: 0.85rem; color: var(--color-slate); margin-top: 0.2rem;" id="modalSeatsRemainingText">2 Workbench Seats Remaining</div>
+
+            <!-- In-place Capacity Editor -->
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.75rem;">
+              <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-slate);">Total Seats:</span>
+              <input type="number" id="modalMaxSeatsInput" min="1" max="50" style="width: 70px; padding: 0.3rem 0.5rem; font-size: 0.85rem; border: 1px solid var(--color-linen); border-radius: 4px; background: #fff; font-weight: bold; color: var(--color-navy);" />
+              <button onclick="saveModalMaxSeats()" class="btn btn-outline btn-sm" style="font-size: 11px; padding: 0.3rem 0.65rem; color: var(--color-copper); border-color: var(--color-copper);">
+                Update Capacity
+              </button>
+            </div>
           </div>
           <div style="width: 180px; height: 12px; background: rgba(27, 38, 59, 0.1); border-radius: 999px; overflow: hidden;">
             <div id="modalCapacityBar" style="height: 100%; background: var(--color-copper); width: 66%; transition: width 0.3s ease;"></div>
@@ -1228,11 +1237,14 @@
             ${evt.location}
           </td>
           <td style="padding: 1rem;">
-            <div style="display: flex; align-items: center; gap: 0.75rem;">
-              <div style="flex: 1; min-width: 100px; height: 8px; background: rgba(27,38,59,0.08); border-radius: 999px; overflow: hidden;">
-                <div style="height: 100%; width: ${pct}%; background: ${available <= 1 ? 'var(--color-copper)' : 'var(--color-mint)'};"></div>
+            <div style="display: flex; align-items: center; gap: 0.6rem;">
+              <div style="flex: 1; min-width: 80px; height: 8px; background: rgba(27,38,59,0.08); border-radius: 999px; overflow: hidden;">
+                <div style="height: 100%; width: ${pct}%; background: ${available === 0 ? 'var(--color-navy)' : (available <= 1 ? 'var(--color-copper)' : 'var(--color-mint)')};"></div>
               </div>
-              <span style="font-size: 0.8rem; font-weight: 700; color: var(--color-navy);">${filled} / ${evt.maxSeats}</span>
+              <span style="font-size: 0.85rem; font-weight: 700; color: var(--color-navy); white-space: nowrap;">${filled} / ${evt.maxSeats}</span>
+              <button onclick="promptEditSeats('${evt.id}')" title="Edit Seat Limit" style="background: #fff; border: 1px solid var(--color-linen); border-radius: 4px; padding: 2px 6px; cursor: pointer; font-size: 11px; color: var(--color-copper); font-weight: bold;">
+                ✏️
+              </button>
             </div>
           </td>
           <td style="padding: 1rem;">
@@ -1241,7 +1253,10 @@
             </span>
           </td>
           <td style="padding: 1rem; text-align: right;">
-            <div style="display: inline-flex; gap: 0.5rem;">
+            <div style="display: inline-flex; gap: 0.4rem;">
+              <button onclick="promptEditSeats('${evt.id}')" class="btn btn-outline btn-sm" style="font-size: 11px; padding: 0.35rem 0.55rem; color: var(--color-navy); border-color: var(--color-navy);" title="Edit Total Workbench Seats">
+                ✏️ Seats (${evt.maxSeats})
+              </button>
               <button onclick="openRosterModal('${evt.id}')" class="btn btn-primary btn-sm" style="font-size: 11px; padding: 0.35rem 0.65rem;">
                 👥 Manage Roster (${filled})
               </button>
@@ -1305,6 +1320,69 @@
       }
     }
 
+    function promptEditSeats(eventId) {
+      const evt = liveEventsData.find(e => e.id === eventId);
+      if (!evt) return;
+
+      const currentFilled = evt.attendees ? evt.attendees.length : 0;
+      const input = prompt(
+        `Edit Workbench Capacity for "${evt.dates}":\n\nCurrent Seats: ${evt.maxSeats}\nEnrolled Students: ${currentFilled}\n\nEnter new total workbench seats:`,
+        evt.maxSeats
+      );
+
+      if (input === null) return;
+      const newMax = parseInt(input.trim(), 10);
+      if (isNaN(newMax) || newMax < 1) {
+        alert('Please enter a valid positive number for workbench capacity.');
+        return;
+      }
+
+      if (newMax < currentFilled) {
+        if (!confirm(`Warning: The new capacity (${newMax}) is lower than the current number of registered students (${currentFilled}). This will immediately mark the session as SOLD OUT. Continue?`)) {
+          return;
+        }
+      }
+
+      evt.maxSeats = newMax;
+      renderLiveEventsTable();
+      saveCmsToStorage();
+
+      const newAvailable = Math.max(0, newMax - currentFilled);
+      if (newAvailable === 0) {
+        alert(`✓ Capacity updated to ${newMax} workbenches. Session is now SOLD OUT.`);
+      } else {
+        alert(`✓ Capacity updated to ${newMax} workbenches. Now showing ${newAvailable} seats available!`);
+      }
+    }
+
+    function saveModalMaxSeats() {
+      if (!activeRosterEventId) return;
+      const evt = liveEventsData.find(e => e.id === activeRosterEventId);
+      if (!evt) return;
+
+      const input = document.getElementById('modalMaxSeatsInput');
+      const newMax = parseInt(input.value.trim(), 10);
+      if (isNaN(newMax) || newMax < 1) {
+        alert('Please enter a valid positive number for workbench capacity.');
+        return;
+      }
+
+      const currentFilled = evt.attendees ? evt.attendees.length : 0;
+      if (newMax < currentFilled) {
+        if (!confirm(`Warning: The new capacity (${newMax}) is lower than registered students (${currentFilled}). Session will be marked SOLD OUT. Continue?`)) {
+          return;
+        }
+      }
+
+      evt.maxSeats = newMax;
+      updateModalRosterView();
+      renderLiveEventsTable();
+      saveCmsToStorage();
+
+      const newAvailable = Math.max(0, newMax - currentFilled);
+      alert(`✓ Workbench capacity updated to ${newMax}! (${newAvailable} seats currently available)`);
+    }
+
     // Modal: Live Attendee Roster Manager
     function openRosterModal(eventId) {
       activeRosterEventId = eventId;
@@ -1334,6 +1412,8 @@
 
       const assignBtn = document.getElementById('btnAssignBenchSeat');
       const studentSelect = document.getElementById('modalStudentSelect');
+      const maxSeatsInput = document.getElementById('modalMaxSeatsInput');
+      if (maxSeatsInput) maxSeatsInput.value = evt.maxSeats;
 
       if (available === 0) {
         document.getElementById('modalCapacityText').innerHTML = `${filled} of ${evt.maxSeats} Workbenches Reserved <span style="color: var(--color-copper); font-size: 0.85rem; font-weight: bold;">(100% Full)</span>`;
