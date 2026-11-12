@@ -166,7 +166,7 @@
       <button onclick="setMode('dashboard')" id="btn-mode-dashboard" class="demo-nav-btn">
         🎓 Student Dashboard
       </button>
-      <button onclick="setMode('admin')" id="btn-mode-admin" class="demo-nav-btn">
+      <button onclick="setMode('admin')" id="btn-mode-admin" class="demo-nav-btn" style="display: none;">
         ⚙️ Admin Studio
       </button>
     </div>
@@ -185,13 +185,19 @@
         </div>
       </div>
 
-      <div style="display: flex; align-items: center; gap: 1rem;">
-        <div style="display: flex; align-items: center; gap: 0.65rem; background: rgba(224, 209, 183, 0.12); border: 1px solid rgba(224, 209, 183, 0.25); padding: 0.35rem 0.85rem; border-radius: 9999px; color: #FAF3EA; font-size: 0.85rem; font-weight: 700;">
-          <span style="width: 26px; height: 26px; border-radius: 50%; background: var(--color-copper); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;">S</span>
-          <span id="activeUserLabel">Sarah Jenkins (Student)</span>
+      <div style="display: flex; align-items: center; gap: 0.85rem;">
+        <!-- User Persona / Identity Selector -->
+        <div style="display: flex; align-items: center; gap: 0.5rem; background: rgba(224, 209, 183, 0.12); border: 1px solid rgba(224, 209, 183, 0.25); padding: 0.3rem 0.75rem; border-radius: 9999px;">
+          <span id="userAvatarIcon" style="width: 24px; height: 24px; border-radius: 50%; background: var(--color-copper); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold;">S</span>
+          <select id="userPersonaSelect" onchange="handlePersonaChange(this.value)" style="background: transparent; color: #FAF3EA; border: none; font-size: 0.8rem; font-weight: 700; cursor: pointer; outline: none; padding-right: 0.25rem;">
+            <option value="student" style="background: var(--color-navy); color: #fff;">🎓 Student: Sarah Jenkins</option>
+            <option value="admin_jeremiah" style="background: var(--color-navy); color: #fff;">👑 Admin: Jeremiah Trumble</option>
+            <option value="admin_joyanna" style="background: var(--color-navy); color: #fff;">👑 Admin: Joyanna Dunaway</option>
+          </select>
         </div>
+
         <a href="index.html" class="btn btn-outline btn-sm" style="color: #FAF3EA !important; border-color: rgba(224, 209, 183, 0.4); font-size: 0.75rem;">
-          Main Site
+          Main Site &rarr;
         </a>
       </div>
     </div>
@@ -897,6 +903,76 @@
     // 1. DATA MODELS & STATE
     // =========================================================================
 
+    // Authorized Institute Administrators (Strict RBAC)
+    const authorizedAdmins = [
+      { id: "admin_jeremiah", name: "Jeremiah Trumble", email: "jeremiah@sewingmachinesinstitute.com", role: "admin", initial: "J", title: "Founder & Master Technician" },
+      { id: "admin_joyanna", name: "Joyanna Dunaway", email: "joyanna@sewingmachinesinstitute.com", role: "admin", initial: "J", title: "Director & Administrator" }
+    ];
+
+    // Current User (Default: Student Sarah Jenkins)
+    let currentUser = {
+      id: "student",
+      name: "Sarah Jenkins",
+      email: "student@sewingmachinesinstitute.com",
+      role: "student",
+      initial: "S",
+      title: "Student"
+    };
+
+    function handlePersonaChange(personaKey) {
+      if (personaKey === "admin_jeremiah") {
+        currentUser = authorizedAdmins[0];
+      } else if (personaKey === "admin_joyanna") {
+        currentUser = authorizedAdmins[1];
+      } else {
+        currentUser = {
+          id: "student",
+          name: "Sarah Jenkins",
+          email: "student@sewingmachinesinstitute.com",
+          role: "student",
+          initial: "S",
+          title: "Student"
+        };
+      }
+      applyUserPermissions();
+    }
+
+    function applyUserPermissions() {
+      const adminBtn = document.getElementById('btn-mode-admin');
+      const avatar = document.getElementById('userAvatarIcon');
+      const select = document.getElementById('userPersonaSelect');
+
+      if (avatar) avatar.innerText = currentUser.initial;
+      if (select) select.value = currentUser.id;
+
+      // Update video watermark for student identity
+      const wm = document.getElementById('demoWatermark');
+      if (wm) {
+        wm.innerText = `🛡️ SMI University • ${currentUser.name} (${currentUser.email}) • Licensed Stream`;
+      }
+
+      // Check if user is an authorized admin
+      const isAdmin = currentUser.role === "admin" && (currentUser.name === "Jeremiah Trumble" || currentUser.name === "Joyanna Dunaway");
+
+      if (isAdmin) {
+        // Show Admin Studio button only to Jeremiah Trumble & Joyanna Dunaway
+        if (adminBtn) {
+          adminBtn.style.display = "inline-flex";
+          adminBtn.innerHTML = `⚙️ Admin Studio <span style="font-size: 9px; padding: 1px 5px; border-radius: 4px; background: var(--color-mint); color: #1B263B; margin-left: 0.35rem; font-weight: bold;">ADMIN</span>`;
+        }
+      } else {
+        // Strictly HIDE Admin Studio button from all students
+        if (adminBtn) {
+          adminBtn.style.display = "none";
+        }
+        // If student is currently viewing admin, immediately kick them out to student dashboard
+        const adminView = document.getElementById('view-admin');
+        if (adminView && adminView.style.display !== 'none') {
+          setMode('dashboard');
+        }
+      }
+    }
+
     // Video Classroom Curriculum Data
     const sampleLessons = [
       { id: 1, title: "Lesson 1: Anatomy of the Sewing Machine & Essential Tools", dur: "12m", completed: true, is_preview: true },
@@ -1100,6 +1176,16 @@
 
     // Main Top Navigation Mode Switcher (Classroom vs Dashboard vs Admin)
     function setMode(mode) {
+      // Security Check: Only Jeremiah Trumble and Joyanna Dunaway can enter admin mode
+      if (mode === 'admin') {
+        const isAdmin = currentUser.role === "admin" && (currentUser.name === "Jeremiah Trumble" || currentUser.name === "Joyanna Dunaway");
+        if (!isAdmin) {
+          alert('⛔ Access Restricted:\nThe Admin Command Studio is restricted exclusively to Institute Administrators (Jeremiah Trumble & Joyanna Dunaway).\n\nStudents do not have clearance to access this area.');
+          setMode('dashboard');
+          return;
+        }
+      }
+
       ['classroom', 'dashboard', 'admin'].forEach(m => {
         const view = document.getElementById('view-' + m);
         if (view) {
@@ -1861,9 +1947,24 @@
     renderAdminLessons();
     loadCmsForm();
 
-    if (window.location.hash === '#admin' || localStorage.getItem('smi_init_mode') === 'admin') {
+    if (window.location.hash.startsWith('#admin') || localStorage.getItem('smi_init_mode') === 'admin') {
       try { localStorage.removeItem('smi_init_mode'); } catch (e) {}
-      setMode('admin');
+      const adminAuth = prompt('Institute Administrator Verification Required:\n\nSelect Administrator Identity:\n1 - Jeremiah Trumble (Master Technician)\n2 - Joyanna Dunaway (Director)\n\n(Press Cancel to view as Student)');
+      if (adminAuth === '1') {
+        currentUser = authorizedAdmins[0];
+        applyUserPermissions();
+        setMode('admin');
+      } else if (adminAuth === '2') {
+        currentUser = authorizedAdmins[1];
+        applyUserPermissions();
+        setMode('admin');
+      } else {
+        currentUser = { id: "student", name: "Sarah Jenkins", email: "student@sewingmachinesinstitute.com", role: "student", initial: "S", title: "Student" };
+        applyUserPermissions();
+        setMode('dashboard');
+      }
+    } else {
+      applyUserPermissions();
     }
   </script>
 </body>
