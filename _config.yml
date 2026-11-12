@@ -1,0 +1,6 @@
+theme: null
+include:
+  - images
+exclude:
+  - lms
+  - gohighlevel_package
