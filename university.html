@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SMI University | Interactive Learning Suite & Classroom Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,400;1,700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    :root {
+      --color-navy: #1B263B;
+      --color-navy-dark: #0D131D;
+      --color-parchment: #F5E6D3;
+      --color-parchment-light: #FAF3E9;
+      --color-copper: #9B5E3C;
+      --color-copper-hover: #7E482B;
+      --color-slate: #415A77;
+      --color-linen: #E0D1B7;
+      --color-mint: #7EB09B;
+    }
+    body {
+      background-color: var(--color-parchment);
+      font-family: var(--font-body);
+      color: var(--color-text-main);
+      margin: 0;
+      padding: 0;
+    }
+    .demo-bar {
+      background: var(--color-navy-dark);
+      color: #FAF3EA;
+      padding: 0.6rem 1.5rem;
+      border-bottom: 2px solid var(--color-copper);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+    }
+    .demo-nav-btn {
+      padding: 0.4rem 0.85rem;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.775rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      border: 1px solid rgba(224, 209, 183, 0.3);
+      background: rgba(255, 255, 255, 0.08);
+      color: #FAF3EA;
+      transition: all 0.2s;
+    }
+    .demo-nav-btn.active, .demo-nav-btn:hover {
+      background: var(--color-copper);
+      border-color: var(--color-copper);
+      color: #FFFFFF;
+    }
+    /* Classroom 2-Pane Grid */
+    .classroom-layout {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      min-height: calc(100vh - 120px);
+      background: var(--color-navy-dark);
+    }
+    .video-pane {
+      background: #000000;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .video-box {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      user-select: none;
+    }
+    .floating-watermark {
+      position: absolute;
+      top: 15%;
+      left: 15%;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.32);
+      pointer-events: none;
+      z-index: 50;
+      user-select: none;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+      transition: all 2s ease-in-out;
+    }
+    .curriculum-pane {
+      background: var(--color-navy);
+      color: #FFFFFF;
+      border-left: 1px solid rgba(224, 209, 183, 0.15);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .lesson-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.9rem 1.25rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: #CBD5E1;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .lesson-row:hover {
+      background: rgba(126, 176, 155, 0.12);
+      color: #FFFFFF;
+    }
+    .lesson-row.active {
+      background: rgba(155, 94, 60, 0.35);
+      color: #FFFFFF;
+      border-left: 4px solid var(--color-copper);
+    }
+    .checkbox-box {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      border: 2px solid var(--color-linen);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+    .checkbox-box.checked {
+      background: var(--color-mint);
+      border-color: var(--color-mint);
+      color: var(--color-navy);
+    }
+    @media (max-width: 1024px) {
+      .classroom-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Demo Switcher Bar -->
+  <div class="demo-bar">
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <a href="index.html" style="color: var(--color-mint); text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 0.35rem;">
+        &larr; Back to Main Website
+      </a>
+      <span style="color: rgba(224, 209, 183, 0.4);">&bull;</span>
+      <span style="font-weight: 700; color: #FAF3EA;">SMI University Interactive Suite Demo</span>
+    </div>
+
+    <!-- Mode Selector Buttons -->
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+      <button onclick="setMode('classroom')" id="btn-mode-classroom" class="demo-nav-btn active">
+        📺 Video Classroom (Coursera/Udemy UI)
+      </button>
+      <button onclick="setMode('dashboard')" id="btn-mode-dashboard" class="demo-nav-btn">
+        🎓 Student Dashboard
+      </button>
+      <button onclick="setMode('admin')" id="btn-mode-admin" class="demo-nav-btn">
+        ⚙️ Admin Studio &amp; Wix CSV
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Navbar -->
+  <header style="background: var(--color-navy); border-bottom: 3px solid var(--color-copper); padding: 0.85rem 1.5rem; box-shadow: var(--shadow-md);">
+    <div style="max-width: 1380px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; align-items: center; gap: 0.85rem;">
+        <img src="images/logo-emblem.png" alt="SMI Emblem" style="width: 42px; height: 42px; object-fit: contain;" />
+        <div>
+          <h1 style="font-family: var(--font-heading); font-size: 1.25rem; color: #FFFFFF; margin: 0; line-height: 1.1;">SMI University</h1>
+          <span style="font-size: 0.725rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-mint);">
+            Sewing Machines Institute &bull; Learning Suite
+          </span>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <div style="display: flex; align-items: center; gap: 0.65rem; background: rgba(224, 209, 183, 0.12); border: 1px solid rgba(224, 209, 183, 0.25); padding: 0.35rem 0.85rem; border-radius: 9999px; color: #FAF3EA; font-size: 0.85rem; font-weight: 700;">
+          <span style="width: 26px; height: 26px; border-radius: 50%; background: var(--color-copper); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;">S</span>
+          <span id="activeUserLabel">Sarah Jenkins (Student)</span>
+        </div>
+        <a href="index.html" class="btn btn-outline btn-sm" style="color: #FAF3EA !important; border-color: rgba(224, 209, 183, 0.4); font-size: 0.75rem;">
+          Main Site
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================================================================
+       VIEW 1: COURSERA / UDEMY 2-PANE VIDEO CLASSROOM
+       ====================================================================== -->
+  <div id="view-classroom" class="classroom-layout">
+    
+    <!-- Left Pane: Video & Content Tabs -->
+    <div class="video-pane">
+      
+      <!-- Video Player with Anti-Download Layer & Dynamic Floating Watermark -->
+      <div class="video-box" id="videoBox" oncontextmenu="handleRightClick(event)">
+        <!-- Forensic Floating Watermark -->
+        <div id="demoWatermark" class="floating-watermark">
+          🛡️ SMI University &bull; Sarah Jenkins (student@smi.com) &bull; Licensed Content
+        </div>
+
+        <!-- Video Simulation Canvas / Poster -->
+        <div style="text-align: center; color: #FFFFFF; padding: 2rem; z-index: 10;">
+          <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--color-copper); color: #FFFFFF; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 1.75rem; box-shadow: 0 4px 20px rgba(155, 94, 60, 0.6); cursor: pointer;" onclick="alert('Video playback streaming via authenticated byte-range proxy /api/stream. Direct downloads and screen ripping are restricted.')">
+            ▶
+          </div>
+          <div style="font-family: var(--font-heading); font-size: 1.35rem; color: #FAF3E9; font-weight: 700;" id="activeVideoTitle">
+            Lesson 3: Needle-to-Hook Timing Demystified
+          </div>
+          <p style="font-size: 0.85rem; color: #B4C4D5; margin-top: 0.4rem;">
+            Master Technician Jeremiah Trumble &bull; 18:24 Minutes &bull; 1080p Protected Stream
+          </p>
+          <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(27, 38, 59, 0.8); border: 1px solid var(--color-mint); padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; color: var(--color-mint); margin-top: 0.75rem;">
+            <span>🛡️ Anti-Download Controls Enabled</span>
+            <span>&bull;</span>
+            <span>Forensic Watermarking Active</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Theater Action Bar -->
+      <div style="background: var(--color-navy); color: #FFFFFF; padding: 1.25rem 1.75rem; border-bottom: 2px solid rgba(224, 209, 183, 0.15); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-mint); font-weight: 700; display: block; margin-bottom: 0.2rem;">
+            Free 7-Step Machine Maintenance Blueprint &bull; Module 1
+          </span>
+          <h2 style="font-size: 1.35rem; margin: 0; color: #FFFFFF;" id="activeLessonHeading">
+            Lesson 3: Needle-to-Hook Timing Demystified
+          </h2>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem;">
+          <button id="completeBtn" onclick="toggleLessonComplete()" class="btn btn-outline btn-sm" style="color: #FAF3EA !important; border-color: var(--color-mint);">
+            Mark Lesson Complete
+          </button>
+          <button onclick="nextLesson()" class="btn btn-primary btn-sm">
+            Next Lesson &rarr;
+          </button>
+        </div>
+      </div>
+
+      <!-- Lesson Content Tabs -->
+      <div style="display: flex; gap: 1rem; border-bottom: 2px solid var(--color-linen); padding: 0 1.75rem; background: var(--color-parchment-light);">
+        <button onclick="switchTab('notes')" id="tab-btn-notes" style="padding: 1rem 0.5rem; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; background: transparent; border: none; border-bottom: 3px solid var(--color-copper); color: var(--color-copper); cursor: pointer;">
+          🛠️ Workbench Notes
+        </button>
+        <button onclick="switchTab('blueprints')" id="tab-btn-blueprints" style="padding: 1rem 0.5rem; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; background: transparent; border: none; border-bottom: 3px solid transparent; color: var(--color-slate); cursor: pointer;">
+          📐 Schematics &amp; Blueprints
+        </button>
+        <button onclick="switchTab('qa')" id="tab-btn-qa" style="padding: 1rem 0.5rem; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; background: transparent; border: none; border-bottom: 3px solid transparent; color: var(--color-slate); cursor: pointer;">
+          💬 Ask Jeremiah Q&amp;A
+        </button>
+        <button onclick="switchTab('security')" id="tab-btn-security" style="padding: 1rem 0.5rem; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; background: transparent; border: none; border-bottom: 3px solid transparent; color: var(--color-slate); cursor: pointer;">
+          🛡️ Anti-Download Details
+        </button>
+      </div>
+
+      <!-- Tab Body 1: Notes -->
+      <div id="tab-pane-notes" style="padding: 2.25rem 1.75rem; background: var(--color-parchment); color: var(--color-text-main); flex: 1;">
+        <div style="max-width: 820px;">
+          <span class="badge-pill" style="background: rgba(155, 94, 60, 0.15); color: var(--color-copper); margin-bottom: 0.75rem;">Master Technician Guide</span>
+          <h3 style="font-size: 1.45rem; margin-bottom: 0.75rem;" id="tabNotesTitle">Mechanical Overview: Needle-to-Hook Timing</h3>
+          <p style="font-size: 1rem; color: var(--color-slate); line-height: 1.7;">
+            Understanding the universal loop-forming principle that governs 99% of all sewing machines. When the needle rises from its lowest position, thread slack forms a loop directly in the path of the rotating or oscillating hook point.
+          </p>
+
+          <div style="background: var(--color-parchment-light); border: 1px solid var(--color-linen); border-left: 4px solid var(--color-copper); padding: 1.25rem 1.5rem; border-radius: 4px; margin: 1.5rem 0;">
+            <strong style="color: var(--color-navy); font-size: 1rem; display: block; margin-bottom: 0.4rem;">Critical Bench Tolerances:</strong>
+            <ul style="padding-left: 1.25rem; font-size: 0.9rem; line-height: 1.7; margin: 0;">
+              <li><strong>Scarf Clearance:</strong> 0.05mm &ndash; 0.10mm (hook must glide past without striking needle).</li>
+              <li><strong>Needle Bar Rise:</strong> 2.0mm &ndash; 2.4mm upward travel from lowest dead center.</li>
+              <li><strong>Hook Point Condition:</strong> Zero burrs or thread-cut notches (inspect under 10x magnification).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Body 2: Blueprints -->
+      <div id="tab-pane-blueprints" style="display: none; padding: 2.25rem 1.75rem; background: var(--color-parchment); color: var(--color-text-main); flex: 1;">
+        <div style="max-width: 820px;">
+          <h3 style="margin-bottom: 0.5rem;">Authorized Mechanical Blueprints</h3>
+          <p style="color: var(--color-slate); margin-bottom: 1.5rem;">Downloadable technical specifications licensed for your workshop bench.</p>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div style="background: #FFFFFF; border: 1px solid var(--color-linen); padding: 1.5rem; border-radius: 8px;">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">📐</div>
+              <strong style="color: var(--color-navy); display: block; margin-bottom: 0.25rem;">Hook Clearance Gauge Blueprint</strong>
+              <p style="font-size: 0.8rem; color: var(--color-slate); margin-bottom: 1rem;">2.0mm rise measurement chart for rotary and oscillating systems.</p>
+              <button onclick="alert('Authorized Blueprint Verified: Timing_Blueprint_2026.pdf (Encrypted for Sarah Jenkins)')" class="btn btn-outline btn-sm">
+                View Blueprint &darr;
+              </button>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid var(--color-linen); padding: 1.5rem; border-radius: 8px;">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">⚙️</div>
+              <strong style="color: var(--color-navy); display: block; margin-bottom: 0.25rem;">Rotary Assembly Exploded Diagram</strong>
+              <p style="font-size: 0.8rem; color: var(--color-slate); margin-bottom: 1rem;">Complete breakdown of vertical &amp; drop-in rotary hook components.</p>
+              <button onclick="alert('Authorized Blueprint Verified: Rotary_Assembly_Spec.pdf (Encrypted for Sarah Jenkins)')" class="btn btn-outline btn-sm">
+                View Blueprint &darr;
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Body 3: Q&A -->
+      <div id="tab-pane-qa" style="display: none; padding: 2.25rem 1.75rem; background: var(--color-parchment); color: var(--color-text-main); flex: 1;">
+        <div style="max-width: 820px;">
+          <h3 style="margin-bottom: 0.5rem;">Workbench Q&amp;A</h3>
+          <p style="color: var(--color-slate); margin-bottom: 1.5rem;">Questions posted by students and answers from lead instructor Jeremiah Trumble.</p>
+          <div style="background: #FFFFFF; border: 1px solid var(--color-linen); padding: 1.25rem; border-radius: 8px; margin-bottom: 1rem;">
+            <strong>Student Question (Robert M.):</strong>
+            <p style="font-size: 0.9rem; color: var(--color-slate); margin: 0.4rem 0 0.75rem;">
+              &ldquo;My hook passes the scarf with good clearance, but thread still shreds on heavy seams. What should I check next?&rdquo;
+            </p>
+            <div style="background: rgba(126, 176, 155, 0.18); border-left: 3px solid var(--color-mint); padding: 0.75rem 1rem; border-radius: 4px; font-size: 0.85rem; color: #1F4E3C;">
+              <strong>Jeremiah Trumble:</strong> &ldquo;Check the thread guide eyelet right above the needle clamp, Robert! Microscopic burrs from broken needles often saw through thread under high tension. Polish it with an emery cord.&rdquo;
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Body 4: Security Details -->
+      <div id="tab-pane-security" style="display: none; padding: 2.25rem 1.75rem; background: var(--color-parchment); color: var(--color-text-main); flex: 1;">
+        <div style="max-width: 820px;">
+          <span class="badge-pill" style="background: rgba(126, 176, 155, 0.2); color: #2D6A4F; margin-bottom: 0.75rem;">Anti-Download DRM</span>
+          <h3 style="margin-bottom: 0.5rem;">Institutional Content Protection</h3>
+          <p style="font-size: 0.9rem; color: var(--color-slate); line-height: 1.7;">
+            SMI University uses multi-layered protection mirroring Coursera and LinkedIn Learning:
+          </p>
+          <ul style="font-size: 0.9rem; color: var(--color-slate); line-height: 1.8;">
+            <li><strong>Dynamic Floating Watermark:</strong> Student identity is stamped across video frames to deter camera and screen capture recording.</li>
+            <li><strong>Authenticated Byte-Range Proxy:</strong> Video files are never exposed as direct public URLs; chunks are streamed via <code>/api/stream</code> requiring active session authentication.</li>
+            <li><strong>Browser Restrictions:</strong> Context menus are blocked, download menus stripped, and developer inspection hotkeys intercepted.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Pane: Collapsible Curriculum Drawer -->
+    <aside class="curriculum-pane">
+      <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(224, 209, 183, 0.15); background: rgba(13, 19, 29, 0.6);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+          <h3 style="font-family: var(--font-heading); color: #FFFFFF; font-size: 1.15rem; margin: 0;">Course Content</h3>
+          <span class="badge-pill" style="background: rgba(126, 176, 155, 0.2); color: var(--color-mint); font-size: 10px;" id="progressBadge">
+            3 / 7 Completed
+          </span>
+        </div>
+        <div style="width: 100%; height: 6px; background: rgba(224, 209, 183, 0.2); border-radius: 9999px; overflow: hidden; margin: 0.4rem 0;">
+          <div id="progressBar" style="height: 100%; width: 43%; background: linear-gradient(90deg, var(--color-copper), var(--color-mint)); border-radius: 9999px; transition: width 0.3s;"></div>
+        </div>
+        <span style="font-size: 0.75rem; color: #A0B2C6;">43% Course Finished</span>
+      </div>
+
+      <!-- Lesson List -->
+      <div style="flex: 1; overflow-y: auto;" id="curriculumList">
+        <!-- Lessons rendered via JS below -->
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- ======================================================================
+       VIEW 2: STUDENT DASHBOARD
+       ====================================================================== -->
+  <div id="view-dashboard" style="display: none; max-width: 1240px; margin: 2.5rem auto; padding: 0 1.5rem;">
+    <div style="margin-bottom: 2rem;">
+      <span class="badge-pill" style="background: rgba(155, 94, 60, 0.15); color: var(--color-copper); margin-bottom: 0.5rem;">Student Workbench</span>
+      <h1 style="font-size: 2.2rem; margin: 0;">Welcome, Sarah Jenkins</h1>
+      <p style="color: var(--color-slate); margin-top: 0.25rem;">Track your progress, stream protected lessons, and reference workbench blueprints.</p>
+    </div>
+
+    <!-- Continue Learning Card -->
+    <div style="background: linear-gradient(135deg, var(--color-navy) 0%, #28374D 100%); color: #FFFFFF; border: 2px solid var(--color-copper); border-radius: 12px; padding: 2rem; margin-bottom: 2.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+      <div>
+        <span class="badge-pill" style="background: rgba(126, 176, 155, 0.2); color: var(--color-mint); font-size: 11px; margin-bottom: 0.5rem;">Continue Where You Left Off</span>
+        <h3 style="color: #FFFFFF; font-size: 1.4rem; margin: 0.25rem 0;">Lesson 3: Needle-to-Hook Timing Demystified</h3>
+        <p style="color: #B4C4D5; font-size: 0.85rem; margin: 0;">Free 7-Step Machine Maintenance Blueprint &bull; 18 Minutes</p>
+      </div>
+      <button onclick="setMode('classroom')" class="btn btn-primary btn-md">Resume Classroom &rarr;</button>
+    </div>
+
+    <!-- Enrolled Courses Grid -->
+    <h2 style="font-size: 1.5rem; margin-bottom: 1.25rem;">Enrolled Programs</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem;">
+      
+      <!-- Card 1 -->
+      <div style="background: #FFFFFF; border: 1px solid var(--color-linen); border-radius: 12px; overflow: hidden;">
+        <img src="images/student-inspection.jpg" alt="Free Course" style="width: 100%; height: 160px; object-fit: cover;" />
+        <div style="padding: 1.5rem;">
+          <span class="badge-pill" style="background: rgba(126, 176, 155, 0.15); color: #2D6A4F; font-size: 10px;">Free Access</span>
+          <h3 style="font-size: 1.15rem; margin: 0.5rem 0;">Free 7-Step Machine Maintenance Blueprint</h3>
+          <p style="font-size: 0.85rem; color: var(--color-slate); margin-bottom: 1rem;">Foundational mechanical checkpoints for home &amp; studio sewers.</p>
+          <div style="margin-bottom: 1rem;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: bold; margin-bottom: 0.25rem;">
+              <span>Progress</span>
+              <span style="color: var(--color-copper);">43% Complete</span>
+            </div>
+            <div style="width: 100%; height: 6px; background: var(--color-linen); border-radius: 9999px; overflow: hidden;">
+              <div style="height: 100%; width: 43%; background: var(--color-copper);"></div>
+            </div>
+          </div>
+          <button onclick="setMode('classroom')" class="btn btn-primary btn-sm w-full" style="width: 100%;">Enter Classroom &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div style="background: #FFFFFF; border: 1px solid var(--color-linen); border-radius: 12px; overflow: hidden;">
+        <img src="images/technician-repair.jpg" alt="ProTraining 1" style="width: 100%; height: 160px; object-fit: cover;" />
+        <div style="padding: 1.5rem;">
+          <span class="badge-pill" style="background: rgba(155, 94, 60, 0.15); color: var(--color-copper); font-size: 10px;">Flagship Certification</span>
+          <h3 style="font-size: 1.15rem; margin: 0.5rem 0;">ProTraining 1: Complete Home Correspondence Course</h3>
+          <p style="font-size: 0.85rem; color: var(--color-slate); margin-bottom: 1rem;">16 comprehensive modules covering 99% of all mechanical machines.</p>
+          <div style="margin-bottom: 1rem;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: bold; margin-bottom: 0.25rem;">
+              <span>Progress</span>
+              <span style="color: var(--color-copper);">Unlocked &bull; 0% Complete</span>
+            </div>
+            <div style="width: 100%; height: 6px; background: var(--color-linen); border-radius: 9999px; overflow: hidden;">
+              <div style="height: 100%; width: 0%; background: var(--color-copper);"></div>
+            </div>
+          </div>
+          <button onclick="alert('Switching to ProTraining 1 correspondence curriculum in classroom!')" class="btn btn-primary btn-sm w-full" style="width: 100%;">Enter Classroom &rarr;</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       VIEW 3: ADMIN STUDIO & WIX CSV IMPORTER
+       ====================================================================== -->
+  <div id="view-admin" style="display: none; max-width: 1240px; margin: 2.5rem auto; padding: 0 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid var(--color-linen); padding-bottom: 1.5rem;">
+      <div>
+        <span class="badge-pill" style="background: rgba(126, 176, 155, 0.2); color: #2D6A4F; margin-bottom: 0.5rem;">⚙️ Admin Studio</span>
+        <h1 style="font-size: 2.2rem; margin: 0;">SMI University Management</h1>
+        <p style="color: var(--color-slate); margin-top: 0.25rem;">Control student access, bulk import accounts from Wix, and manage courses.</p>
+      </div>
+
+      <button onclick="runSampleWixMigration()" class="btn btn-primary btn-sm">
+        ⚡ Run Sample Wix CSV Migration (6 Students)
+      </button>
+    </div>
+
+    <!-- Stats -->
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 2.5rem;">
+      <div style="background: #FFFFFF; border: 1px solid var(--color-linen); padding: 1.25rem; border-radius: 8px;">
+        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-slate); font-weight: bold;">Registered Students</span>
+        <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: bold; color: var(--color-navy);" id="statStudents">8 Profiles</div>
+      </div>
+      <div style="background: #FFFFFF; border: 1px solid var(--color-linen); padding: 1.25rem; border-radius: 8px;">
+        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-slate); font-weight: bold;">Active Enrollments</span>
+        <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: bold; color: var(--color-copper);" id="statEnrollments">14 Active</div>
+      </div>
+      <div style="background: #FFFFFF; border: 1px solid var(--color-linen); padding: 1.25rem; border-radius: 8px;">
+        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-slate); font-weight: bold;">SMI Courses</span>
+        <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: bold; color: var(--color-mint);">5 Programs</div>
+      </div>
+      <div style="background: #FFFFFF; border: 1px solid var(--color-linen); padding: 1.25rem; border-radius: 8px;">
+        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-slate); font-weight: bold;">Wix Migrated</span>
+        <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: bold; color: var(--color-slate);" id="statWix">6 Accounts</div>
+      </div>
+    </div>
+
+    <!-- Student Access Control Table -->
+    <div style="background: #FFFFFF; border: 1px solid var(--color-linen); border-radius: 12px; overflow: hidden; padding: 1.5rem; margin-bottom: 2.5rem;">
+      <h3 style="margin-bottom: 0.5rem;">Student Access &amp; Entitlements (1-Click Granular Toggle)</h3>
+      <p style="font-size: 0.85rem; color: var(--color-slate); margin-bottom: 1.5rem;">
+        Click any course pill to immediately grant or revoke access on that student's profile:
+      </p>
+
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;" id="adminTable">
+        <thead>
+          <tr style="background: var(--color-navy); color: #FFFFFF; text-align: left;">
+            <th style="padding: 0.75rem 1rem;">Student Name &amp; Email</th>
+            <th style="padding: 0.75rem 1rem;">Source</th>
+            <th style="padding: 0.75rem 1rem;">Course Entitlements (Click to Toggle)</th>
+          </tr>
+        </thead>
+        <tbody id="studentTableBody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script>
+    const sampleLessons = [
+      { id: 1, title: "Lesson 1: Anatomy of the Sewing Machine & Essential Tools", dur: "12m", completed: true },
+      { id: 2, title: "Lesson 2: Cleaning the Shuttle Race & Bobbin Case", dur: "15m", completed: true },
+      { id: 3, title: "Lesson 3: Needle-to-Hook Timing Demystified", dur: "18m", completed: false },
+      { id: 4, title: "Lesson 4: Calibrating Upper & Lower Thread Tension", dur: "14m", completed: false },
+      { id: 5, title: "Lesson 5: Feed Dog Height & Material Transport", dur: "16m", completed: false },
+      { id: 6, title: "Lesson 6: Motor Drive Belts & Lubrication Chemistry", dur: "20m", completed: false },
+      { id: 7, title: "Lesson 7: The Master Diagnostic Checklist", dur: "15m", completed: false }
+    ];
+
+    let currentLessonIdx = 2; // Lesson 3
+
+    function renderCurriculum() {
+      const list = document.getElementById('curriculumList');
+      list.innerHTML = '';
+
+      sampleLessons.forEach((l, idx) => {
+        const row = document.createElement('div');
+        row.className = 'lesson-row' + (idx === currentLessonIdx ? ' active' : '');
+        row.onclick = () => selectLesson(idx);
+
+        row.innerHTML = `
+          <div class="checkbox-box ${l.completed ? 'checked' : ''}" onclick="toggleCheck(${idx}, event)">
+            ${l.completed ? '&#10003;' : ''}
+          </div>
+          <div style="flex: 1;">
+            <div style="font-size: 0.85rem; line-height: 1.3; margin-bottom: 0.2rem;">${l.title}</div>
+            <div style="font-size: 0.725rem; color: #8A9CAE;">⏱️ ${l.dur} &bull; Video Lecture</div>
+          </div>
+        `;
+        list.appendChild(row);
+      });
+
+      updateProgressStats();
+    }
+
+    function selectLesson(idx) {
+      currentLessonIdx = idx;
+      const lesson = sampleLessons[idx];
+      document.getElementById('activeVideoTitle').innerText = lesson.title;
+      document.getElementById('activeLessonHeading').innerText = lesson.title;
+      document.getElementById('tabNotesTitle').innerText = 'Mechanical Overview: ' + lesson.title;
+      document.getElementById('completeBtn').innerText = lesson.completed ? '✓ Lesson Completed' : 'Mark Lesson Complete';
+      renderCurriculum();
+    }
+
+    function toggleLessonComplete() {
+      const l = sampleLessons[currentLessonIdx];
+      l.completed = !l.completed;
+      document.getElementById('completeBtn').innerText = l.completed ? '✓ Lesson Completed' : 'Mark Lesson Complete';
+      renderCurriculum();
+    }
+
+    function toggleCheck(idx, e) {
+      e.stopPropagation();
+      sampleLessons[idx].completed = !sampleLessons[idx].completed;
+      renderCurriculum();
+    }
+
+    function nextLesson() {
+      if (currentLessonIdx < sampleLessons.length - 1) {
+        selectLesson(currentLessonIdx + 1);
+      } else {
+        alert('Congratulations! You have completed all lessons in this module.');
+      }
+    }
+
+    function updateProgressStats() {
+      const completed = sampleLessons.filter(l => l.completed).length;
+      const total = sampleLessons.length;
+      const pct = Math.round((completed / total) * 100);
+
+      document.getElementById('progressBadge').innerText = `${completed} / ${total} Completed`;
+      document.getElementById('progressBar').style.width = pct + '%';
+    }
+
+    // Dynamic Floating Watermark Animation
+    function animateWatermark() {
+      const wm = document.getElementById('demoWatermark');
+      const box = document.getElementById('videoBox');
+      if (wm && box) {
+        const maxX = Math.max(10, box.clientWidth - wm.clientWidth - 40);
+        const maxY = Math.max(10, box.clientHeight - wm.clientHeight - 40);
+        wm.style.left = Math.floor(Math.random() * maxX) + 'px';
+        wm.style.top = Math.floor(Math.random() * maxY) + 'px';
+      }
+    }
+    setInterval(animateWatermark, 4000);
+
+    function handleRightClick(e) {
+      e.preventDefault();
+      alert('🛡️ Right-click and direct downloads are disabled by SMI University anti-download security policy.');
+    }
+
+    // Mode Switcher (Classroom vs Dashboard vs Admin)
+    function setMode(mode) {
+      ['classroom', 'dashboard', 'admin'].forEach(m => {
+        document.getElementById('view-' + m).style.display = m === mode ? (m === 'classroom' ? 'grid' : 'block') : 'none';
+        const btn = document.getElementById('btn-mode-' + m);
+        if (m === mode) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Tab Switcher
+    function switchTab(tab) {
+      ['notes', 'blueprints', 'qa', 'security'].forEach(t => {
+        const btn = document.getElementById('tab-btn-' + t);
+        const pane = document.getElementById('tab-pane-' + t);
+        if (t === tab) {
+          btn.style.color = 'var(--color-copper)';
+          btn.style.borderBottomColor = 'var(--color-copper)';
+          pane.style.display = 'block';
+        } else {
+          btn.style.color = 'var(--color-slate)';
+          btn.style.borderBottomColor = 'transparent';
+          pane.style.display = 'none';
+        }
+      });
+    }
+
+    // Admin Users Table Data
+    const studentsData = [
+      { name: "Sarah Jenkins", email: "student@sewingmachinesinstitute.com", source: "web", free: true, pro1: true, pro2: false, live: false },
+      { name: "Eleanor Vance", email: "eleanor.vance@example.com", source: "wix_migration", free: true, pro1: true, pro2: false, live: false },
+      { name: "Marcus Thorne", email: "marcus.thorne@example.com", source: "wix_migration", free: true, pro1: false, pro2: false, live: true },
+      { name: "Beatrice Holt", email: "beatrice.holt@example.com", source: "wix_migration", free: true, pro1: false, pro2: true, live: false },
+      { name: "Daniel Kincaid", email: "daniel.kincaid@example.com", source: "wix_migration", free: true, pro1: false, pro2: false, live: false, industrial: true },
+      { name: "Arthur Pendleton", email: "arthur.pendleton@example.com", source: "wix_migration", free: true, pro1: true, pro2: false, live: false }
+    ];
+
+    function renderAdminTable() {
+      const tbody = document.getElementById('studentTableBody');
+      tbody.innerHTML = '';
+
+      studentsData.forEach(s => {
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid var(--color-linen)';
+        tr.innerHTML = `
+          <td style="padding: 0.9rem 1rem;">
+            <strong style="color: var(--color-navy); display: block;">${s.name}</strong>
+            <span style="font-size: 0.8rem; color: var(--color-slate);">${s.email}</span>
+          </td>
+          <td style="padding: 0.9rem 1rem;">
+            <span class="badge-pill" style="font-size: 10px; background: ${s.source === 'wix_migration' ? 'rgba(155, 94, 60, 0.15)' : 'rgba(126, 176, 155, 0.2)'}; color: ${s.source === 'wix_migration' ? 'var(--color-copper)' : '#2D6A4F'};">
+              ${s.source}
+            </span>
+          </td>
+          <td style="padding: 0.9rem 1rem;">
+            <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+              <button onclick="togglePill(this)" class="badge-pill" style="cursor: pointer; font-size: 10px; border: 1px solid var(--color-mint); background: rgba(126, 176, 155, 0.2); color: #2D6A4F;">
+                ✓ Free 7-Step
+              </button>
+              <button onclick="togglePill(this)" class="badge-pill" style="cursor: pointer; font-size: 10px; border: 1px solid ${s.pro1 ? 'var(--color-mint)' : 'var(--color-linen)'}; background: ${s.pro1 ? 'rgba(126, 176, 155, 0.2)' : 'rgba(27, 38, 59, 0.08)'}; color: ${s.pro1 ? '#2D6A4F' : 'var(--color-navy)'};">
+                ${s.pro1 ? '✓ ' : ''}ProTraining 1 ($699)
+              </button>
+              <button onclick="togglePill(this)" class="badge-pill" style="cursor: pointer; font-size: 10px; border: 1px solid ${s.pro2 ? 'var(--color-mint)' : 'var(--color-linen)'}; background: ${s.pro2 ? 'rgba(126, 176, 155, 0.2)' : 'rgba(27, 38, 59, 0.08)'}; color: ${s.pro2 ? '#2D6A4F' : 'var(--color-navy)'};">
+                ${s.pro2 ? '✓ ' : ''}ProTraining 2 ($499)
+              </button>
+              <button onclick="togglePill(this)" class="badge-pill" style="cursor: pointer; font-size: 10px; border: 1px solid ${s.live ? 'var(--color-mint)' : 'var(--color-linen)'}; background: ${s.live ? 'rgba(126, 176, 155, 0.2)' : 'rgba(27, 38, 59, 0.08)'}; color: ${s.live ? '#2D6A4F' : 'var(--color-navy)'};">
+                ${s.live ? '✓ ' : ''}5-Day Live Bench
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function togglePill(btn) {
+      if (btn.innerText.startsWith('✓')) {
+        btn.innerText = btn.innerText.replace('✓ ', '');
+        btn.style.background = 'rgba(27, 38, 59, 0.08)';
+        btn.style.color = 'var(--color-navy)';
+        btn.style.borderColor = 'var(--color-linen)';
+      } else {
+        btn.innerText = '✓ ' + btn.innerText;
+        btn.style.background = 'rgba(126, 176, 155, 0.2)';
+        btn.style.color = '#2D6A4F';
+        btn.style.borderColor = 'var(--color-mint)';
+      }
+    }
+
+    function runSampleWixMigration() {
+      alert('⚡ Wix CSV Migration Simulator:\nSuccessfully parsed 6 customer records from Wix Orders export!\n- Created 6 student accounts\n- Auto-mapped and granted ProTraining 1, ProTraining 2, Live Bench, and Industrial courses.');
+    }
+
+    // Initialize on load
+    renderCurriculum();
+    renderAdminTable();
+  </script>
+
+</body>
+</html>
